@@ -68,7 +68,9 @@ void Player::Reset()
 
 void Player::Move(const float x,const float y, sf::Time& deltaTime)
 {
-	shape.move(x * speed * deltaTime.asSeconds(), y * speed * deltaTime.asSeconds());
+	if (!isColliding) {
+		shape.move(x * speed * deltaTime.asSeconds(), y * speed * deltaTime.asSeconds());
+	}
 }
 
 void Player::PlantBomb()
@@ -92,6 +94,11 @@ bool Player::CanPlantBomb()
 void Player::PlantBombDelay(sf::Time deltaTime)
 {
 	bombDelay += deltaTime.asSeconds();
+}
+
+void Player::SetColliding(bool isColliding)
+{
+	this->isColliding = isColliding;
 }
 
 void Player::InitAnimations()

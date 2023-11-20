@@ -22,6 +22,7 @@ public:
 	void PlantBomb();
 	void PlantBombDelay(sf::Time deltaTime);
 	bool CanPlantBomb();
+	void SetColliding(bool isColliding);
 
 	void Reset();
 
@@ -34,6 +35,7 @@ private:
 	float bombDelay;
 	float maxBombDelay;
 	float scale;
+	bool isColliding{ false };
 	bool isPlantingBomb;
 
 	sf::Sprite shape;

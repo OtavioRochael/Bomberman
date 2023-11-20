@@ -14,51 +14,67 @@ int World::GetBlockSize()
 	return 0;
 }
 
-void World::Update(Player& player)
+void World::Update()
 {
-	sf::Vector2f playerPos = player.GetPosition();
 }
 
 void World::Render(sf::RenderWindow& window)
 {
-	for (auto sprite : sprites) {
-		window.draw(*sprite);
+	for (int i = 0; i < 576; i++) {
+		if(sprites[i] != nullptr)
+			window.draw(*sprites[i]);
 	}
+}
+
+void World::CheckPlayerCollisions(Player& player)
+{
+	int playerXPosInGrid = player.GetPosition().x / tileSize;
+	int playerYPosInGrid = player.GetPosition().y / tileSize;
 }
 
 void World::InitMap()
 {
-	map += "************************\n";
-	map += "************************\n";
-	map += "*----------------------*\n";
-	map += "*----------------------*\n";
-	map += "*----------------------*\n";
-	map += "*----------------------*\n";
-	map += "*----------------------*\n";
-	map += "*----------------------*\n";
-	map += "************************\n";
-	map += "************************\n";
+	map = {
+		{ '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*' },
+		{ '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*' },
+		{ '*', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '*' },
+		{ '*', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '*' },
+		{ '*', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '*' },
+		{ '*', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '*' },
+		{ '*', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '*' },
+		{ '*', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '*' },
+		{ '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*' },
+		{ '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*' }
+	};
 
-
-	for (int i = 0; i < map.size(); i++) {
-		sprites.push_back(new sf::Sprite());
-		sprites.at(i)->setScale(2.0f, 2.0f);
+	for (int i = 0; i < 576; i++) {
+		sf::Sprite *sprite = new sf::Sprite();
+		sprite->setScale(sf::Vector2f(2.f, 2.f));
+		sprites.push_back(sprite);
+		
 	}
 
 	int i = 0;
-	for (auto c : map) {
-		switch (c)
-		{
-		case '\n':
-			break;
-		case '*':
-			sprites[i]->setTexture(AssetManager::GetTexture("Texture/brickTile.png"));
-			break;
-		case '-':
-			break;
-		}
 
-		i++;
+	for (int row = 0; row < 10; ++row) {
+		for (int col = 0; col < 21; ++col) {
+			switch (map[row][col])
+			{
+			case '\n':
+				break;
+			case '*':
+				sprites[i]->setTexture(AssetManager::GetTexture("Texture/brickTile.png"));
+				break;
+			case '-':
+				sprites[i]->setTexture(AssetManager::GetTexture("Texture/grass1.png"));
+				sprites[i]->setScale(1.0f,1.0f);
+				break;
+			default:
+				break;
+			}
+
+			i++;
+		}
 	}
 	
 	RenderMap();
@@ -66,19 +82,15 @@ void World::InitMap()
 
 void World::RenderMap()
 {
-	int y = 0;
-	int x = 0;
-	int posX = tileSize * sprites[0]->getScale().x;
-	int posY = tileSize * sprites[0]->getScale().y;
+	int posX = tileSize * sprites[0][0].getScale().x;
+	int posY = tileSize * sprites[0][0].getScale().y;
+	int i = 0;
 
-	for (int i = 0; i < map.size(); i++) {
-
- 		if (map[i] == '\n') {
-			y++;
-			x = -1;
+	for (int x = 0; x < 10; ++x) {
+		for (int y = 0; y < 21; ++y) {
+			if (map[x][y] != '\n');
+				sprites[i]->setPosition(sf::Vector2f(posY * y, posX * x));
+			i++;
 		}
-
-		sprites[i]->setPosition(sf::Vector2f(posX * x, posY * y));
-		x++;
 	}
 }
