@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include "Animator.hpp"
+#include "Bomb.hpp"
 
 enum class PlayerState { None, Up, Down, Left, Right, PlantingBomb };
 
@@ -38,9 +40,11 @@ private:
 	bool isColliding{ false };
 	bool isPlantingBomb;
 
+	std::vector<Bomb*> bombList;
+
 	sf::Sprite shape;
 	sf::Texture texture;
-	int size; //Graphics size
+	int size;
 
 	sf::Vector2u spawnPosition;
 	PlayerState currentState;
