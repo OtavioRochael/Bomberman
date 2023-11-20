@@ -11,7 +11,7 @@ Player::Player()
 	size = 32;
 	shape.setPosition(48.f, 48.f);
 	speed = 200.f;
-	scale = 1.5f;
+	scale = 1.f;
 	shape.scale(scale, scale);
 	shape.setOrigin(size/2.f, size/2.f);
 

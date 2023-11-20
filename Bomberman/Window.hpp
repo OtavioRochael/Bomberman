@@ -27,6 +27,7 @@ private:
 	void Destroy();
 	void Create();
 
+	sf::View view;
 	sf::RenderWindow window;
 	sf::Vector2u windowSize;
 	sf::String windowTitle;

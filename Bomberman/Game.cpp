@@ -1,7 +1,7 @@
 #include "Game.hpp"
 #include <iostream>
 
-Game::Game() : window("Bomberman", sf::Vector2u(768, 768)), player(), world(sf::Vector2u(768,768), 16)
+Game::Game() : window("Bomberman", sf::Vector2u(768, 768)), player(), world(sf::Vector2u(768,768), 32)
 {
 }
 
