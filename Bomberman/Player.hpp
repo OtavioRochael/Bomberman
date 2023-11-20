@@ -2,8 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Animator.hpp"
 
-enum class Direction { None, Up, Down, Left, Right };
-enum class State {Alive, Dead};
+enum class PlayerState { None, Up, Down, Left, Right, PlantingBomb };
 
 class Player
 {
@@ -14,14 +13,15 @@ public:
 	void Update(sf::Time& deltaTime);
 	void Render(sf::RenderWindow& window);
 
-	void SetDirection(Direction dir);
-	Direction GetDirection();
+	void SetPlayerState(PlayerState dir);
+	PlayerState GetDirection();
 	sf::Vector2f GetPosition();
 	float GetSpeed();
-	const bool IsPlantingBomb() const;
 
 	void SetPosition(float x, float y);
 	void PlantBomb();
+	void PlantBombDelay(sf::Time deltaTime);
+	bool CanPlantBomb();
 
 	void Reset();
 
@@ -30,6 +30,9 @@ private:
 	int lives;
 	int speed;
 	int bombs;
+	int maxBombs;
+	float bombDelay;
+	float maxBombDelay;
 	float scale;
 	bool isPlantingBomb;
 
@@ -38,7 +41,7 @@ private:
 	int size; //Graphics size
 
 	sf::Vector2u spawnPosition;
-	Direction currentDirection;
+	PlayerState currentState;
 	Animator *animator;
 
 	void InitAnimations();

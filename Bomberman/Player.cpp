@@ -3,11 +3,15 @@
 
 Player::Player()
 {
+	maxBombs = 1;
+	maxBombDelay = 2.f;
+	bombDelay = maxBombDelay;
+	bombs = 3;
 	isPlantingBomb = false;
 	size = 32;
-	shape.setPosition(20.f, 20.f);
+	shape.setPosition(48.f, 48.f);
 	speed = 200.f;
-	scale = 2.f;
+	scale = 1.5f;
 	shape.scale(scale, scale);
 	shape.setOrigin(size/2.f, size/2.f);
 
@@ -22,6 +26,7 @@ void Player::Update(sf::Time& deltaTime)
 {
 	UpdateAnimations();
 	animator->Update(deltaTime);
+	PlantBombDelay(deltaTime);
 }
 
 void Player::Render(sf::RenderWindow& window)
@@ -29,14 +34,14 @@ void Player::Render(sf::RenderWindow& window)
 	window.draw(shape);
 }
 
-void Player::SetDirection(Direction dir)
+void Player::SetPlayerState(PlayerState dir)
 {
-	currentDirection = dir;
+	currentState = dir;
 }
 
-Direction Player::GetDirection()
+PlayerState Player::GetDirection()
 {
-	return currentDirection;
+	return currentState;
 }
 
 float Player::GetSpeed()
@@ -56,14 +61,9 @@ void Player::SetPosition(float x, float y)
 
 void Player::Reset()
 {
-	SetDirection(Direction::None);
+	SetPlayerState(PlayerState::None);
 	shape.setPosition(sf::Vector2f(spawnPosition.x * size, spawnPosition.y * size));
-	speed = 5.f;
-}
-
-const bool Player::IsPlantingBomb() const
-{
-	return isPlantingBomb;
+	speed = 10.f;
 }
 
 void Player::Move(const float x,const float y, sf::Time& deltaTime)
@@ -73,8 +73,25 @@ void Player::Move(const float x,const float y, sf::Time& deltaTime)
 
 void Player::PlantBomb()
 {
-	animator->SwitchAnimation("PlantingBomb");
-	//Instanciar bomba na posição
+	if (CanPlantBomb()) {
+		bombs--;
+		std::cout << "Bombs: " << bombs << std::endl;
+	}
+}
+
+bool Player::CanPlantBomb()
+{
+	if (bombs > 0 && bombDelay >= maxBombDelay) {
+		bombDelay = 0;
+		return true;
+	}
+
+	return false;
+}
+
+void Player::PlantBombDelay(sf::Time deltaTime)
+{
+	bombDelay += deltaTime.asSeconds();
 }
 
 void Player::InitAnimations()
@@ -105,23 +122,26 @@ void Player::UpdateAnimations()
 	std::string animation;
 	shape.setScale(scale, scale);
 
-	switch (currentDirection)
+	switch (currentState)
 	{
-	case Direction::None:
+	case PlayerState::None:
 		animation = "Idle";
 		break;
-	case Direction::Up:
+	case PlayerState::Up:
 		animation = "WalkToUp";
 		break;
-	case Direction::Down:
+	case PlayerState::Down:
 		animation = "WalkToDown";
 		break;
-	case Direction::Left:
+	case PlayerState::Left:
 		shape.setScale(-scale, scale);
 		animation = "WalkToRight";
 		break;
-	case Direction::Right:
+	case PlayerState::Right:
 		animation = "WalkToRight";
+		break;
+	case PlayerState::PlantingBomb:
+		animation = "PlantingBomb";
 		break;
 	}
 

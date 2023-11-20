@@ -1,28 +1,8 @@
 #include "World.hpp"
 
-World::World(sf::Vector2u windowSize)
+World::World(sf::Vector2u windowSize, int tileSize) : windowSize(windowSize), tileSize(tileSize)
 {
-	blockSize = 64;
-
-	//Bounds
-	for (int i = 0; i < 4; i++) {
-		bounds[i].setFillColor(sf::Color(150, 0, 0));
-
-		if (!((i + 1) % 2)) {
-			bounds[i].setSize(sf::Vector2f(windowSize.x, blockSize));
-		}
-		else {
-			bounds[i].setSize(sf::Vector2f(blockSize, windowSize.y));
-		}
-
-		if (i < 2) {
-			bounds[i].setPosition(0, 0);
-		}
-		else {
-			bounds[i].setOrigin(bounds[i].getSize());
-			bounds[i].setPosition(windowSize.x, windowSize.y);
-		}
-	}
+	InitMap();
 }
 
 World::~World()
@@ -41,7 +21,64 @@ void World::Update(Player& player)
 
 void World::Render(sf::RenderWindow& window)
 {
-	for (int i = 0; i < 4; i++) {
-		window.draw(bounds[i]);
+	for (auto sprite : sprites) {
+		window.draw(*sprite);
+	}
+}
+
+void World::InitMap()
+{
+	map += "************************\n";
+	map += "************************\n";
+	map += "*----------------------*\n";
+	map += "*----------------------*\n";
+	map += "*----------------------*\n";
+	map += "*----------------------*\n";
+	map += "*----------------------*\n";
+	map += "*----------------------*\n";
+	map += "************************\n";
+	map += "************************\n";
+
+
+	for (int i = 0; i < map.size(); i++) {
+		sprites.push_back(new sf::Sprite());
+		sprites.at(i)->setScale(2.0f, 2.0f);
+	}
+
+	int i = 0;
+	for (auto c : map) {
+		switch (c)
+		{
+		case '\n':
+			break;
+		case '*':
+			sprites[i]->setTexture(AssetManager::GetTexture("Texture/brickTile.png"));
+			break;
+		case '-':
+			break;
+		}
+
+		i++;
+	}
+	
+	RenderMap();
+}
+
+void World::RenderMap()
+{
+	int y = 0;
+	int x = 0;
+	int posX = tileSize * sprites[0]->getScale().x;
+	int posY = tileSize * sprites[0]->getScale().y;
+
+	for (int i = 0; i < map.size(); i++) {
+
+ 		if (map[i] == '\n') {
+			y++;
+			x = -1;
+		}
+
+		sprites[i]->setPosition(sf::Vector2f(posX * x, posY * y));
+		x++;
 	}
 }

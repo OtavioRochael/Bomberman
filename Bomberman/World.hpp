@@ -5,7 +5,7 @@
 class World
 {
 public:
-	World(sf::Vector2u windowSize);
+	World(sf::Vector2u windowSize, int tileSize);
 	~World();
 
 	int GetBlockSize();
@@ -16,8 +16,14 @@ public:
 private:
 	sf::Vector2u windowSize;
 	sf::Vector2i bomb;
-	int blockSize;
+	sf::Texture texture1;
 
-	sf::RectangleShape bounds[4];
+	std::string map;
+	std::vector<sf::Sprite*> sprites;
+	
+	int tileSize;
+
+	void InitMap();
+	void RenderMap();
 };
 

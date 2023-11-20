@@ -24,6 +24,7 @@ private:
 
 	sf::Vector2u windowSize{window.GetWindowSize()};
 
+	sf::Event event;
 	sf::Clock clock;
 	sf::Time elapsedTime;
 	sf::Time deltaTime;
