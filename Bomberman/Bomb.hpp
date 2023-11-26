@@ -13,6 +13,8 @@ public:
 
 	void Update(sf::Time& deltaTime);
 	void Render(sf::RenderWindow& window);
+
+	bool IsDone() { return isDone; }
 private:
 	sf::Sprite sprite;
 	sf::Texture texture;
@@ -25,6 +27,7 @@ private:
 
 	bool explode{ false };
 	bool animPlayed{false };
+	bool isDone{ false };
 
 	Animator *animator;
 

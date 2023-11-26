@@ -26,6 +26,11 @@ void Explosion::PlayAnimation()
 	animPlayed = true;
 }
 
+void Explosion::SetCollidable(bool isCollidable)
+{
+	this->isCollidable = isCollidable;
+}
+
 bool Explosion::IsAnimationPlayed()
 {
 	return animPlayed;

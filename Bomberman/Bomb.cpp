@@ -14,7 +14,6 @@ Bomb::Bomb(sf::Vector2f pos, int explosionRange): position(pos), explosionRange(
 
 Bomb::~Bomb()
 {
-	
 }
 
 void Bomb::Update(sf::Time& deltaTime)
@@ -27,10 +26,20 @@ void Bomb::Update(sf::Time& deltaTime)
 	}
 
 	for (auto& explosion : explosions) {
-		explosion->Update(deltaTime);
+		if (explode) {
+			explosion->SetCollidable(true);
+		}
+
 		if (explode && !explosion->IsAnimationPlayed()) {
 			explosion->PlayAnimation();
 		}
+
+		explosion->Update(deltaTime);
+	}
+
+	if (timer >= 5.5f)
+	{
+		isDone = true;
 	}
 }
 

@@ -32,6 +32,12 @@ void Player::Update(sf::Time& deltaTime)
 	for (auto bomb : bombList)
 	{
 		bomb->Update(deltaTime);
+
+		if (bomb->IsDone())
+		{
+			bombList.erase(std::remove(bombList.begin(), bombList.end(), bomb), bombList.end());
+			delete bomb;
+		}
 	}
 
 }
@@ -89,7 +95,6 @@ void Player::PlantBomb()
 	if (CanPlantBomb()) {
 		bombList.push_back(new Bomb(sf::Vector2f(this->GetPosition().x + 15, this->GetPosition().y + 20), bombRange));
 		bombs--;
-		std::cout << "Bombs: " << bombs << std::endl;
 	}
 }
 
