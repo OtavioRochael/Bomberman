@@ -26,6 +26,16 @@ void World::Render(sf::RenderWindow& window)
 	}
 }
 
+char World::GetSpriteType(int x, int y)
+{
+	for (int i = 0; i < 12; i++) {
+		for (int j = 0; j < 12; j++)
+		{
+			return map[i][j];
+		}
+	}
+}
+
 void World::CheckPlayerCollisions(Player& player)
 {
 	int playerXPosInGrid = player.GetPosition().x / tileSize;

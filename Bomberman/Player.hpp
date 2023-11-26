@@ -34,6 +34,7 @@ private:
 	int speed;
 	int bombs;
 	int maxBombs;
+	int bombRange;
 	float bombDelay;
 	float maxBombDelay;
 	float scale;

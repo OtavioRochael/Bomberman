@@ -13,6 +13,8 @@ public:
 	void Update();
 
 	void Render(sf::RenderWindow& window);
+
+	char GetSpriteType(int x, int y);
 private:
 	Player player;
 

@@ -2,6 +2,7 @@
 
 Player::Player()
 {
+	bombRange = 3;
 	maxBombs = 10;
 	maxBombDelay = 2.f;
 	bombDelay = maxBombDelay;
@@ -27,6 +28,11 @@ void Player::Update(sf::Time& deltaTime)
 	UpdateAnimations();
 	animator->Update(deltaTime);
 	PlantBombDelay(deltaTime);
+	
+	for (auto bomb : bombList)
+	{
+		bomb->Update(deltaTime);
+	}
 
 }
 
@@ -81,7 +87,7 @@ void Player::Move(const float x,const float y, sf::Time& deltaTime)
 void Player::PlantBomb()
 {
 	if (CanPlantBomb()) {
-		bombList.push_back(new Bomb(sf::Vector2f(this->GetPosition().x + 15, this->GetPosition().y + 20)));
+		bombList.push_back(new Bomb(sf::Vector2f(this->GetPosition().x + 15, this->GetPosition().y + 20), bombRange));
 		bombs--;
 		std::cout << "Bombs: " << bombs << std::endl;
 	}

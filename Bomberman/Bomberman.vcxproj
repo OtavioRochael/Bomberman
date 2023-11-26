@@ -136,6 +136,7 @@
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Bomb.cpp" />
+    <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="Animator.hpp" />
     <ClInclude Include="AssetManager.hpp" />
     <ClInclude Include="Bomb.hpp" />
+    <ClInclude Include="Explosion.hpp" />
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Window.hpp" />
