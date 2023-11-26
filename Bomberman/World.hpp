@@ -10,19 +10,24 @@ public:
 
 	int GetBlockSize();
 
-	void Update(Player& player);
+	void Update();
 
 	void Render(sf::RenderWindow& window);
+
+	char GetSpriteType(int x, int y);
 private:
+	Player player;
+
 	sf::Vector2u windowSize;
 	sf::Vector2i bomb;
 	sf::Texture texture1;
 
-	std::string map;
+	std::vector<std::vector<char>> map;
 	std::vector<sf::Sprite*> sprites;
 	
 	int tileSize;
 
+	void CheckPlayerCollisions(Player &player);
 	void InitMap();
 	void RenderMap();
 };

@@ -32,6 +32,5 @@ private:
 	Player player;
 
 	World world;
-
 };
 

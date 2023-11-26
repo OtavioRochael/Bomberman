@@ -1,21 +1,22 @@
 #include "Player.hpp"
-#include <iostream>
 
 Player::Player()
 {
-	maxBombs = 1;
+	bombRange = 3;
+	maxBombs = 10;
 	maxBombDelay = 2.f;
 	bombDelay = maxBombDelay;
-	bombs = 3;
+	bombs = maxBombs;
 	isPlantingBomb = false;
 	size = 32;
 	shape.setPosition(48.f, 48.f);
-	speed = 200.f;
-	scale = 1.5f;
+	speed = 70.f;
+	scale = 1.f;
 	shape.scale(scale, scale);
-	shape.setOrigin(size/2.f, size/2.f);
 
 	InitAnimations();
+
+	shape.setOrigin(size / 2.f, size / 2.f);
 }
 
 Player::~Player()
@@ -27,10 +28,21 @@ void Player::Update(sf::Time& deltaTime)
 	UpdateAnimations();
 	animator->Update(deltaTime);
 	PlantBombDelay(deltaTime);
+	
+	for (auto bomb : bombList)
+	{
+		bomb->Update(deltaTime);
+	}
+
 }
 
 void Player::Render(sf::RenderWindow& window)
 {
+	for(auto bomb : bombList)
+	{
+		bomb->Render(window);
+	}
+
 	window.draw(shape);
 }
 
@@ -63,17 +75,19 @@ void Player::Reset()
 {
 	SetPlayerState(PlayerState::None);
 	shape.setPosition(sf::Vector2f(spawnPosition.x * size, spawnPosition.y * size));
-	speed = 10.f;
 }
 
 void Player::Move(const float x,const float y, sf::Time& deltaTime)
 {
-	shape.move(x * speed * deltaTime.asSeconds(), y * speed * deltaTime.asSeconds());
+	if (!isColliding) {
+		shape.move(x * speed * deltaTime.asSeconds(), y * speed * deltaTime.asSeconds());
+	}
 }
 
 void Player::PlantBomb()
 {
 	if (CanPlantBomb()) {
+		bombList.push_back(new Bomb(sf::Vector2f(this->GetPosition().x + 15, this->GetPosition().y + 20), bombRange));
 		bombs--;
 		std::cout << "Bombs: " << bombs << std::endl;
 	}
@@ -81,7 +95,7 @@ void Player::PlantBomb()
 
 bool Player::CanPlantBomb()
 {
-	if (bombs > 0 && bombDelay >= maxBombDelay) {
+	if (bombs > 0 && bombDelay >= maxBombDelay && bombList.size() <= maxBombs) {
 		bombDelay = 0;
 		return true;
 	}
@@ -92,6 +106,11 @@ bool Player::CanPlantBomb()
 void Player::PlantBombDelay(sf::Time deltaTime)
 {
 	bombDelay += deltaTime.asSeconds();
+}
+
+void Player::SetColliding(bool isColliding)
+{
+	this->isColliding = isColliding;
 }
 
 void Player::InitAnimations()

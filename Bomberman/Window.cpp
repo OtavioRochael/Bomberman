@@ -84,4 +84,9 @@ void Window::Create()
 	auto style = isFullScreen ? sf::Style::Fullscreen : sf::Style::Default;
 
 	window.create({ windowSize.x, windowSize.y }, windowTitle, style);
+
+	view = window.getView();
+	view.setCenter(windowSize.x / 4, windowSize.y / 4);
+	view.zoom(0.5f);
+	window.setView(view);
 }
