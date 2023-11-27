@@ -2,7 +2,7 @@
 
 Player::Player()
 {
-	bombRange = 3;
+	bombRange = 1;
 	maxBombs = 10;
 	maxBombDelay = 2.f;
 	bombDelay = maxBombDelay;
