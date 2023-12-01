@@ -200,7 +200,7 @@ void Player::CheckCollision(std::vector<Explosion*> explosions)
 
 	for (auto& explosion : explosions)
 	{
-		if (collisionBox.intersects(explosion->GetGlobalBounds()) && currentState != PlayerState::isDead) {
+		if (collisionBox.intersects(explosion->GetGlobalBounds()) && currentState != PlayerState::isDead && explosion->GetCollidable()) {
 			currentState = PlayerState::isDead;
 		}
 	}

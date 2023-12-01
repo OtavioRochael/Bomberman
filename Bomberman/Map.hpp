@@ -9,6 +9,7 @@ public:
 
 	void Render(sf::RenderWindow& window);
 private:
+	std::vector<std::vector<Structure*>> mapGrass;
 	std::vector<std::vector<Structure*>> map;
 	std::vector<std::vector<char>> mapChar;
 

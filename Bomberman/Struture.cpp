@@ -22,22 +22,29 @@ void Structure::Render(sf::RenderWindow& window)
 
 void Structure::InitSprite()
 {
+	int chance = rand() % 100 + 1;
 	switch (type)
 	{
-	case Grass: {
-		int chance = rand() % 100 + 1;
+	case Grass: 
 		if (chance < 75)
 			texture = AssetManager::GetTexture("Texture/grass.png");
 		else
 			texture = AssetManager::GetTexture("Texture/grass1.png");
 		break;
-	}
 	case DirtWall:
 		texture = AssetManager::GetTexture("Texture/Brick.png");
 		break;
-	case MetalWall:
-		texture = AssetManager::GetTexture("Texture/Stone.png");
+	case Stone:
+		if (chance < 33)
+			texture = AssetManager::GetTexture("Texture/stone1.png");
+		else if(chance < 66)
+			texture = AssetManager::GetTexture("Texture/stone2.png");
+		else
+			texture = AssetManager::GetTexture("Texture/stone3.png");
+		
 		break;
+	case Box:
+		texture = AssetManager::GetTexture("Texture/box.png");
 	}
 
 	sprite.setTexture(texture);
