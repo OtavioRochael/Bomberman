@@ -1,5 +1,6 @@
 #include "Bomb.hpp"
 #include <iostream>
+#include "Map.hpp"
 
 Bomb::Bomb(sf::Vector2f pos, int explosionRange): position(pos), explosionRange(explosionRange)
 {
@@ -82,7 +83,6 @@ void Bomb::SetExplosionsPosition()
 
 	for(int i=1; i<=explosionRange; i++)
 	{
-
 		explosions.push_back(new Explosion(posX, posY));
 		explosions.push_back(new Explosion(posX - i * tileSize, posY));
 		explosions.push_back(new Explosion(posX + i * tileSize, posY));
