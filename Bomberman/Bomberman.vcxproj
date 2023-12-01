@@ -150,6 +150,7 @@
     <ClInclude Include="Bomb.hpp" />
     <ClInclude Include="Explosion.hpp" />
     <ClInclude Include="Game.hpp" />
+    <ClInclude Include="Map.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Struture.hpp" />
     <ClInclude Include="Window.hpp" />
