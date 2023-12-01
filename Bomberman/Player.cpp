@@ -184,16 +184,24 @@ void Player::UpdateAnimations()
 		animator->SwitchAnimation(animation);
 }
 
+/**
+ * @brief Verifica se o jogador colidiu com alguma explosão.
+ *
+ * Esta função verifica se a caixa de colisão do jogador intersecta com os limites globais de qualquer explosão.
+ * Se uma colisão for detectada e o jogador não estiver já em um estado 'morto', o estado do jogador é definido como 'morto'.
+ *
+ * @param explosions Um vetor de ponteiros para objetos Explosion para verificar a colisão com o jogador.
+ */
 void Player::CheckCollision(std::vector<Explosion*> explosions)
 {
 	float offset = size / 2.75f;
-	collisionBox = sf::FloatRect(shape.getGlobalBounds().left + offset, shape.getGlobalBounds().top + offset, offset/2.f, offset/2.f);
+	collisionBox = sf::FloatRect(shape.getGlobalBounds().left + offset, shape.getGlobalBounds().top + offset, offset / 2.f, offset / 2.f);
 
 	for (auto& explosion : explosions)
 	{
 		if (collisionBox.intersects(explosion->GetGlobalBounds()) && currentState != PlayerState::isDead) {
 			currentState = PlayerState::isDead;
-			std::cout << "IsDead\n";
 		}
 	}
 }
+
