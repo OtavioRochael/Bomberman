@@ -27,7 +27,7 @@ void Bomb::Update(sf::Time& deltaTime)
 
     // Se o timer for maior ou igual a 5 segundos, a bomba é marcada para explodir
     if (timer >= 5.f) {
-					explode = true;
+		explode = true;
     }
 
     // Loop que percorre todas as explosões da bomba
@@ -47,9 +47,9 @@ void Bomb::Update(sf::Time& deltaTime)
     }
 
     // Se o timer for maior ou igual a 5.5 segundos, a bomba é marcada como concluída
-    if (timer >= 5.5f)
+    if (timer >= 5.25f)
     {
-					isDone = true;
+		isDone = true;
     }
 }
 

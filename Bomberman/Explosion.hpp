@@ -15,6 +15,7 @@ public:
 	sf::FloatRect GetGlobalBounds();
 
 	bool IsAnimationPlayed();
+	const bool GetCollidable() const { return isCollidable; }
 private:
 	sf::Sprite sprite;
 	sf::Texture texture;
