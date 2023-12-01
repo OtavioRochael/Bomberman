@@ -1,7 +1,7 @@
 #pragma once
 #include "Window.hpp"
 #include "Player.hpp"
-#include "World.hpp"
+#include "Map.hpp"
 
 class Game
 {
@@ -20,17 +20,15 @@ public:
 private:
 	AssetManager assetManager;
 
+	Map map;
 	Window window;
 
 	sf::Vector2u windowSize{window.GetWindowSize()};
 
-	sf::Event event;
 	sf::Clock clock;
 	sf::Time elapsedTime;
 	sf::Time deltaTime;
 
 	Player player;
-
-	World world;
 };
 
