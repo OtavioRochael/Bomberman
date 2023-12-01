@@ -1,8 +1,8 @@
 #include "Player.hpp"
 
-Player::Player()
+Player::Player(Map* map): map(map)
 {
-	bombRange = 1;
+	bombRange = 3;
 	maxBombs = 10;
 	maxBombDelay = 2.f;
 	bombDelay = maxBombDelay;
@@ -102,7 +102,7 @@ void Player::Move(const float x,const float y, sf::Time& deltaTime)
 void Player::PlantBomb()
 {
 	if (CanPlantBomb()) {
-		bombList.push_back(new Bomb(sf::Vector2f(this->GetPosition().x + 15, this->GetPosition().y + 20), bombRange));
+		bombList.push_back(new Bomb(sf::Vector2f(this->GetPosition().x + 15, this->GetPosition().y + 20), bombRange, map));
 		bombs--;
 	}
 }

@@ -8,6 +8,8 @@ public:
 	~Map();
 
 	void Render(sf::RenderWindow& window);
+	void Remap();
+	char GetMapChar(int posX, int posY);
 private:
 	std::vector<std::vector<Structure*>> mapGrass;
 	std::vector<std::vector<Structure*>> map;

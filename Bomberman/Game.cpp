@@ -1,7 +1,7 @@
 #include "Game.hpp"
 #include <iostream>
 
-Game::Game() : window("Bomberman", sf::Vector2u(768, 768)), player(), map(sf::Vector2i(768,768), 32)
+Game::Game() : window("Bomberman", sf::Vector2u(768, 768)), player(map), map(new Map(sf::Vector2i(768,768), 32))
 {
 	elapsedTime = clock.restart();
 }
@@ -47,7 +47,7 @@ void Game::Update()
 void Game::Render()
 {
 	window.BeginDraw();
-	map.Render(*window.GetRenderWindow());
+	map->Render(*window.GetRenderWindow());
 	player.Render(*window.GetRenderWindow());
 	window.EndDraw();
 }

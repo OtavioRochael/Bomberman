@@ -2,7 +2,7 @@
 #include <iostream>
 #include "Map.hpp"
 
-Bomb::Bomb(sf::Vector2f pos, int explosionRange): position(pos), explosionRange(explosionRange)
+Bomb::Bomb(sf::Vector2f pos, int explosionRange, Map* map): position(pos), explosionRange(explosionRange), map(map)
 {
 	SetRoundPositionToSpawn();
 	sprite.setOrigin(tileSize/2.f, tileSize/2.f);
@@ -95,12 +95,37 @@ void Bomb::SetExplosionsPosition()
 	int posX = position.x - tileSize;
 	int posY = position.y - tileSize;
 
+	int idX = posX / tileSize;
+	int idY = posY / tileSize;
+
+	bool leftExplosion = false;
+	bool rightExplosion = false;
+	bool upExplosion = false;
+	bool downExplosion = false;
+
 	for(int i=1; i<=explosionRange; i++)
 	{
-		explosions.push_back(new Explosion(posX, posY));
-		explosions.push_back(new Explosion(posX - i * tileSize, posY));
-		explosions.push_back(new Explosion(posX + i * tileSize, posY));
-		explosions.push_back(new Explosion(posX, posY + i * tileSize));
-		explosions.push_back(new Explosion(posX, posY - i * tileSize));
+		if(map->GetMapChar(idX, idY) == '-')
+			explosions.push_back(new Explosion(posX, posY));
+
+		if (map->GetMapChar(idX - i, idY) == '-' && !leftExplosion)
+			explosions.push_back(new Explosion(posX - i * tileSize, posY));
+		else if(map->GetMapChar(idX - i, idY) != '-')
+			leftExplosion = true;
+
+		if(map->GetMapChar(idX + i, idY) == '-' && !rightExplosion)
+			explosions.push_back(new Explosion(posX + i * tileSize, posY));
+		else if(map->GetMapChar(idX + i, idY) != '-')
+			rightExplosion = true;
+
+		if(map->GetMapChar(idX, idY + i) == '-' && !downExplosion)
+			explosions.push_back(new Explosion(posX, posY + i * tileSize));
+		else if(map->GetMapChar(idX, idY + i) != '-')
+			downExplosion = true;
+
+		if(map->GetMapChar(idX , idY - i) == '-' && !upExplosion)
+			explosions.push_back(new Explosion(posX, posY - i * tileSize));
+		else if(map->GetMapChar(idX, idY - i) != '-')
+			upExplosion = true;
 	}
 }
