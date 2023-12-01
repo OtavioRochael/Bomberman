@@ -19,29 +19,38 @@ Bomb::~Bomb()
 
 void Bomb::Update(sf::Time& deltaTime)
 {
-	animator->Update(deltaTime);
-	timer = timer + deltaTime.asSeconds();
+    // Atualiza o estado do animator com base no tempo decorrido desde o último quadro
+    animator->Update(deltaTime);
 
-	if (timer >= 5.f) {
-		explode = true;
-	}
+    // Incrementa o timer com o tempo decorrido desde o último quadro
+    timer = timer + deltaTime.asSeconds();
 
-	for (auto& explosion : explosions) {
+    // Se o timer for maior ou igual a 5 segundos, a bomba é marcada para explodir
+    if (timer >= 5.f) {
+					explode = true;
+    }
+
+    // Loop que percorre todas as explosões da bomba
+    for (auto& explosion : explosions) {
+		// Se a bomba estiver marcada para explodir, a explosão é marcada como colidível
 		if (explode) {
 			explosion->SetCollidable(true);
 		}
 
+		// Se a bomba estiver marcada para explodir e a animação da explosão ainda não tiver sido reproduzida, a animação é iniciada
 		if (explode && !explosion->IsAnimationPlayed()) {
 			explosion->PlayAnimation();
 		}
 
+		// Atualiza o estado da explosão com base no tempo decorrido desde o último quadro
 		explosion->Update(deltaTime);
-	}
+    }
 
-	if (timer >= 5.5f)
-	{
-		isDone = true;
-	}
+    // Se o timer for maior ou igual a 5.5 segundos, a bomba é marcada como concluída
+    if (timer >= 5.5f)
+    {
+					isDone = true;
+    }
 }
 
 void Bomb::Render(sf::RenderWindow& window)
