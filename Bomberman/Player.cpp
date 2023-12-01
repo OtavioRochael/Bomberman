@@ -33,6 +33,9 @@ void Player::Update(sf::Time& deltaTime)
 	{
 		bomb->Update(deltaTime);
 
+		if(bomb->IsExploded())
+			CheckCollision(bomb->GetExplosions());
+
 		if (bomb->IsDone())
 		{
 			bombList.erase(std::remove(bombList.begin(), bombList.end(), bomb), bombList.end());
@@ -81,6 +84,11 @@ void Player::Reset()
 {
 	SetPlayerState(PlayerState::None);
 	shape.setPosition(sf::Vector2f(spawnPosition.x * size, spawnPosition.y * size));
+}
+
+PlayerState Player::GetPlayerState()
+{
+	return this->currentState;
 }
 
 void Player::Move(const float x,const float y, sf::Time& deltaTime)
@@ -167,8 +175,25 @@ void Player::UpdateAnimations()
 	case PlayerState::PlantingBomb:
 		animation = "PlantingBomb";
 		break;
+	case PlayerState::isDead:
+		animation = "Idle";
+		break;
 	}
 
 	if(animation != animator->GetCurrentAnimationName())
 		animator->SwitchAnimation(animation);
+}
+
+void Player::CheckCollision(std::vector<Explosion*> explosions)
+{
+	float offset = size / 2.75f;
+	collisionBox = sf::FloatRect(shape.getGlobalBounds().left + offset, shape.getGlobalBounds().top + offset, offset/2.f, offset/2.f);
+
+	for (auto& explosion : explosions)
+	{
+		if (collisionBox.intersects(explosion->GetGlobalBounds()) && currentState != PlayerState::isDead) {
+			currentState = PlayerState::isDead;
+			std::cout << "IsDead\n";
+		}
+	}
 }

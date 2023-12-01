@@ -58,6 +58,11 @@ void Bomb::Render(sf::RenderWindow& window)
 	}
 }
 
+std::vector<Explosion*>& Bomb::GetExplosions()
+{
+	return explosions;
+}
+
 void Bomb::InitAnimations()
 {
 	animator = new Animator(sprite);
