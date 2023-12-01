@@ -29,16 +29,22 @@ void Player::Update(sf::Time& deltaTime)
 	animator->Update(deltaTime);
 	PlantBombDelay(deltaTime);
 	
-	for (auto bomb : bombList)
-	{
-		bomb->Update(deltaTime);
+    for (auto bomb : bombList)
+    {
+        // Atualiza o estado da bomba com base no tempo decorrido desde o último quadro
+        bomb->Update(deltaTime);
 
-		if (bomb->IsDone())
-		{
-			bombList.erase(std::remove(bombList.begin(), bombList.end(), bomb), bombList.end());
-			delete bomb;
-		}
-	}
+        // Se a bomba explodiu, verifica se o jogador colidiu com a explosão
+        if(bomb->IsExploded())
+            CheckCollision(bomb->GetExplosions());
+
+        // Se a bomba terminou de explodir, ela é removida da lista de bombas e o espaço de memória que ocupava é liberado
+        if (bomb->IsDone())
+        {
+            bombList.erase(std::remove(bombList.begin(), bombList.end(), bomb), bombList.end());
+            delete bomb;
+        }
+    }
 
 }
 
@@ -171,4 +177,25 @@ void Player::UpdateAnimations()
 
 	if(animation != animator->GetCurrentAnimationName())
 		animator->SwitchAnimation(animation);
+}
+
+/**
+ * @brief Verifica se o jogador colidiu com alguma explosão.
+ *
+ * Esta função verifica se a caixa de colisão do jogador intersecta com os limites globais de qualquer explosão.
+ * Se uma colisão for detectada e o jogador não estiver já em um estado 'morto', o estado do jogador é definido como 'morto'.
+ *
+ * @param explosions Um vetor de ponteiros para objetos Explosion para verificar a colisão com o jogador.
+ */
+void Player::CheckCollision(std::vector<Explosion*> explosions)
+{
+	float offset = size / 2.75f;
+	collisionBox = sf::FloatRect(shape.getGlobalBounds().left + offset, shape.getGlobalBounds().top + offset, offset / 2.f, offset / 2.f);
+
+	for (auto& explosion : explosions)
+	{
+		if (collisionBox.intersects(explosion->GetGlobalBounds()) && currentState != PlayerState::isDead) {
+			currentState = PlayerState::isDead;
+		}
+	}
 }
