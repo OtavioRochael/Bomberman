@@ -15,6 +15,8 @@ public:
 	void Render(sf::RenderWindow& window);
 
 	bool IsDone() { return isDone; }
+
+	std::vector<Explosion*>& GetExplosions();
 private:
 	sf::Sprite sprite;
 	sf::Texture texture;

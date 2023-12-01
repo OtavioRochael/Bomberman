@@ -31,6 +31,11 @@ void Explosion::SetCollidable(bool isCollidable)
 	this->isCollidable = isCollidable;
 }
 
+sf::FloatRect Explosion::GetGlobalBounds()
+{
+	return sprite.getGlobalBounds();
+}
+
 bool Explosion::IsAnimationPlayed()
 {
 	return animPlayed;
