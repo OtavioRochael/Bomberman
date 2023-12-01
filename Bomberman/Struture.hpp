@@ -7,7 +7,7 @@ enum StrutureType
 	Box,
 	Grass,
 	DirtWall,
-	MetalWall
+	Stone
 };
 
 class Structure

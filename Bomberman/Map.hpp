@@ -7,7 +7,6 @@ public:
 	Map(sf::Vector2i windowSize, int tileSize);
 	~Map();
 
-	std::vector<std::vector<Structure>>* GetMap();
 	void Render(sf::RenderWindow& window);
 private:
 	std::vector<std::vector<Structure*>> map;
