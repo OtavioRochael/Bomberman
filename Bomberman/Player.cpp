@@ -34,17 +34,15 @@ void Player::Update(sf::Time& deltaTime)
         // Atualiza o estado da bomba com base no tempo decorrido desde o último quadro
         bomb->Update(deltaTime);
 
-        // Se a bomba explodiu, verifica se o jogador colidiu com a explosão
-        if(bomb->IsExploded())
-            CheckCollision(bomb->GetExplosions());
+		if(bomb->IsExploded())
+			CheckCollision(bomb->GetExplosions());
 
-        // Se a bomba terminou de explodir, ela é removida da lista de bombas e o espaço de memória que ocupava é liberado
-        if (bomb->IsDone())
-        {
-            bombList.erase(std::remove(bombList.begin(), bombList.end(), bomb), bombList.end());
-            delete bomb;
-        }
-    }
+		if (bomb->IsDone())
+		{
+			bombList.erase(std::remove(bombList.begin(), bombList.end(), bomb), bombList.end());
+			delete bomb;
+		}
+	}
 
 }
 
@@ -87,6 +85,11 @@ void Player::Reset()
 {
 	SetPlayerState(PlayerState::None);
 	shape.setPosition(sf::Vector2f(spawnPosition.x * size, spawnPosition.y * size));
+}
+
+PlayerState Player::GetPlayerState()
+{
+	return this->currentState;
 }
 
 void Player::Move(const float x,const float y, sf::Time& deltaTime)
@@ -173,6 +176,9 @@ void Player::UpdateAnimations()
 	case PlayerState::PlantingBomb:
 		animation = "PlantingBomb";
 		break;
+	case PlayerState::isDead:
+		animation = "Idle";
+		break;
 	}
 
 	if(animation != animator->GetCurrentAnimationName())
@@ -199,3 +205,4 @@ void Player::CheckCollision(std::vector<Explosion*> explosions)
 		}
 	}
 }
+

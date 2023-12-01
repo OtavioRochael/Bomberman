@@ -12,6 +12,7 @@ public:
 	void Render(sf::RenderWindow &window);
 	void PlayAnimation();
 	void SetCollidable(bool isCollidable);
+	sf::FloatRect GetGlobalBounds();
 
 	bool IsAnimationPlayed();
 private:
