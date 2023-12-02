@@ -2,11 +2,12 @@
 #include <SFML/Graphics.hpp>
 #include "Animator.hpp"
 #include "Explosion.hpp"
+#include "Map.hpp"
 
 class Bomb
 {
 public:
-	Bomb(sf::Vector2f pos, int explosionRange);
+	Bomb(sf::Vector2f pos, int explosionRange, Map* map);
 	~Bomb();
 
 	const bool IsExploded() const { return explode; }
@@ -23,6 +24,9 @@ private:
 	sf::Vector2f position;
 
 	std::vector<Explosion*> explosions;
+	std::vector<sf::Vector2i> idsExplosions;
+
+	Map* map;
 
 	float timer;
 	int explosionRange;

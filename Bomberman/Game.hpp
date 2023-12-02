@@ -20,7 +20,7 @@ public:
 private:
 	AssetManager assetManager;
 
-	Map map;
+	Map* map;
 	Window window;
 
 	sf::Vector2u windowSize{window.GetWindowSize()};

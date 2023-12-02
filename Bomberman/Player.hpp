@@ -9,7 +9,7 @@ enum class PlayerState { None, Up, Down, Left, Right, PlantingBomb, isDead };
 class Player
 {
 public:
-	Player();
+	Player(Map* map);
 	~Player();
 
 	void Update(sf::Time& deltaTime);
@@ -43,6 +43,7 @@ private:
 	bool isPlantingBomb;
 
 	std::vector<Bomb*> bombList;
+	Map* map;
 
 	sf::Sprite shape;
 	sf::Texture texture;

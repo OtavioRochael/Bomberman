@@ -2,7 +2,7 @@
 #include <iostream>
 #include "Map.hpp"
 
-Bomb::Bomb(sf::Vector2f pos, int explosionRange): position(pos), explosionRange(explosionRange)
+Bomb::Bomb(sf::Vector2f pos, int explosionRange, Map* map): position(pos), explosionRange(explosionRange), map(map)
 {
 	SetRoundPositionToSpawn();
 	sprite.setOrigin(tileSize/2.f, tileSize/2.f);
@@ -49,6 +49,11 @@ void Bomb::Update(sf::Time& deltaTime)
     // Se o timer for maior ou igual a 5.5 segundos, a bomba é marcada como concluída
     if (timer >= 5.25f)
     {
+		for (auto ids : idsExplosions)
+		{
+			map->Remap(ids.x, ids.y);
+		}
+
 		isDone = true;
     }
 }
@@ -95,12 +100,69 @@ void Bomb::SetExplosionsPosition()
 	int posX = position.x - tileSize;
 	int posY = position.y - tileSize;
 
-	for(int i=1; i<=explosionRange; i++)
+	int idX = posX / tileSize;
+	int idY = posY / tileSize;
+
+	bool leftExplosion = false;
+	bool rightExplosion = false;
+	bool upExplosion = false;
+	bool downExplosion = false;
+
+	for (int i = 1; i <= explosionRange; i++)
 	{
-		explosions.push_back(new Explosion(posX, posY));
-		explosions.push_back(new Explosion(posX - i * tileSize, posY));
-		explosions.push_back(new Explosion(posX + i * tileSize, posY));
-		explosions.push_back(new Explosion(posX, posY + i * tileSize));
-		explosions.push_back(new Explosion(posX, posY - i * tileSize));
+		if (map->GetMapChar(idX, idY) == '-')
+			explosions.push_back(new Explosion(posX, posY));
+
+		//Checa se a explosão deve ser criada na esquerda
+		if (map->GetMapChar(idX - i, idY) == '-' && !leftExplosion)
+			explosions.push_back(new Explosion(posX - i * tileSize, posY));
+		else if (map->GetMapChar(idX - i, idY) == '+' && !leftExplosion) {
+			explosions.push_back(new Explosion(posX - i * tileSize, posY));
+			leftExplosion = true;
+			map->SetMapChar(idX - i, idY, '-');
+			idsExplosions.push_back(sf::Vector2i(idX - i, idY));
+		}
+		else if (map->GetMapChar(idX - i, idY) == '/' && !leftExplosion) {
+			leftExplosion = true;
+		}
+
+		//Checa se a explosão deve ser criada na direita
+		if (map->GetMapChar(idX + i, idY) == '-' && !rightExplosion)
+			explosions.push_back(new Explosion(posX + i * tileSize, posY));
+		else if (map->GetMapChar(idX + i, idY) == '+' && !rightExplosion) {
+			explosions.push_back(new Explosion(posX + i * tileSize, posY));
+			rightExplosion = true;
+			map->SetMapChar(idX + i, idY, '-');
+			idsExplosions.push_back(sf::Vector2i(idX + i, idY));
+		}
+		else if (map->GetMapChar(idX + i, idY) == '/' && !rightExplosion) {
+			rightExplosion = true;
+		}
+
+		//Checa se a explosão deve ser criada em cima
+		if (map->GetMapChar(idX, idY + i) == '-' && !downExplosion)
+			explosions.push_back(new Explosion(posX, posY + i * tileSize));
+		else if (map->GetMapChar(idX, idY + i) == '+' && !downExplosion) {
+			explosions.push_back(new Explosion(posX, posY + i * tileSize));
+			downExplosion = true;
+			map->SetMapChar(idX, idY + i, '-');
+			idsExplosions.push_back(sf::Vector2i(idX, idY + i));
+		}
+		else if (map->GetMapChar(idX, idY + i) == '/' && !downExplosion) {
+			downExplosion = true;
+		}
+
+		//Checa se a explosão deve ser criada em baixo
+		if (map->GetMapChar(idX, idY - i) == '-' && !upExplosion)
+			explosions.push_back(new Explosion(posX, posY - i * tileSize));
+		else if (map->GetMapChar(idX, idY - i) == '+' && !upExplosion) {
+			explosions.push_back(new Explosion(posX, posY - i * tileSize));
+			upExplosion = true;
+			map->SetMapChar(idX, idY - i, '-');
+			idsExplosions.push_back(sf::Vector2i(idX, idY - i));
+		}
+		else if (map->GetMapChar(idX, idY - i) == '/' && !upExplosion) {
+			upExplosion = true;
+		}
 	}
 }
