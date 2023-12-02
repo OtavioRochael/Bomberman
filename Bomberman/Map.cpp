@@ -2,6 +2,7 @@
 
 Map::Map(sf::Vector2i windowSize, int tileSize) : windowSize(windowSize), tileSize(tileSize)
 {
+	RestartClock();
 	InitMap();
 }
 
@@ -20,8 +21,48 @@ void Map::Render(sf::RenderWindow& window)
 	}
 }
 
-void Map::Remap()
+void Map::Remap(int idX, int idY)
 {
+	if (idX < 0 || idY < 0 || idX >= mapSizeX / 2.f || idY >= mapSizeY / 2.f)
+		return;
+
+	map[idX][idY] = new Structure(idX * tileSize, idY * tileSize, StrutureType::Grass);
+}
+
+void Map::SetMapChar(int posX, int posY, char c)
+{
+	if(posX < 0 || posY < 0 || posX >= mapSizeX/2.f|| posY >= mapSizeY/2.f)
+		return;
+	mapChar[posX][posY] = c;
+}
+
+char Map::GetMapChar(int posX, int posY)
+{
+	if(posX < 0 || posY < 0 || posX >= mapSizeX/2.f|| posY >= mapSizeY/2.f)
+		return ' ';
+	return mapChar[posX][posY];
+}
+
+void Map::InitMap()
+{
+	mapSizeX = windowSize.x / tileSize;
+	mapSizeY = windowSize.y / tileSize;
+
+	mapChar = {
+		{ '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'},
+		{ '*', '-', '-', '+', '+', '+', '/', '+', '+', '-', '+', '*'},
+		{ '*', '-', '/', '+', '/', '+', '+', '/', '-', '/', '+', '*'},
+		{ '*', '+', '+', '-', '+', '-', '/', '+', '+', '+', '+', '*'},
+		{ '*', '/', '+', '/', '-', '/', '-', '+', '+', '+', '/', '*'},
+		{ '*', '-', '/', '-', '+', '+', '-', '+', '/', '+', '+', '*'},
+		{ '*', '-', '+', '+', '/', '-', '/', '-', '+', '-', '+', '*'},
+		{ '*', '+', '/', '/', '+', '+', '+', '+', '+', '/', '+', '*'},
+		{ '*', '-', '+', '-', '-', '/', '-', '/', '-', '+', '+', '*'},
+		{ '*', '+', '/', '-', '+', '-', '+', '+', '-', '/', '-', '*'},
+		{ '*', '+', '+', '-', '/', '+', '+', '-', '+', '-', '-', '*'},
+		{ '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'}
+	};
+
 	for (int i = 0; i < mapSizeX; i++) {
 		map.push_back(std::vector<Structure*>());
 		mapGrass.push_back(std::vector<Structure*>());
@@ -58,32 +99,7 @@ void Map::Remap()
 	}
 }
 
-char Map::GetMapChar(int posX, int posY)
+void Map::RestartClock()
 {
-	if(posX < 0 || posY < 0 || posX >= mapSizeX/2.f|| posY >= mapSizeY/2.f)
-		return ' ';
-	return mapChar[posX][posY];
-}
-
-void Map::InitMap()
-{
-	mapSizeX = windowSize.x / tileSize;
-	mapSizeY = windowSize.y / tileSize;
-
-	mapChar = {
-		{ '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'},
-		{ '*', '-', '-', '+', '+', '+', '/', '+', '+', '-', '+', '*'},
-		{ '*', '-', '/', '+', '/', '+', '+', '/', '-', '/', '+', '*'},
-		{ '*', '+', '+', '-', '+', '-', '/', '+', '+', '+', '+', '*'},
-		{ '*', '/', '+', '/', '-', '/', '-', '+', '+', '+', '/', '*'},
-		{ '*', '-', '/', '-', '+', '+', '-', '+', '/', '+', '+', '*'},
-		{ '*', '-', '+', '+', '/', '-', '/', '-', '+', '-', '+', '*'},
-		{ '*', '+', '/', '/', '+', '+', '+', '+', '+', '/', '+', '*'},
-		{ '*', '-', '+', '-', '-', '/', '-', '/', '-', '+', '+', '*'},
-		{ '*', '+', '/', '-', '+', '-', '+', '+', '-', '/', '-', '*'},
-		{ '*', '+', '+', '-', '/', '+', '+', '-', '+', '-', '-', '*'},
-		{ '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'}
-	};
-
-	Remap();
+	deltaTime = clock.restart();
 }

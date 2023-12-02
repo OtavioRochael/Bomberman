@@ -49,6 +49,11 @@ void Bomb::Update(sf::Time& deltaTime)
     // Se o timer for maior ou igual a 5.5 segundos, a bomba é marcada como concluída
     if (timer >= 5.25f)
     {
+		for (auto ids : idsExplosions)
+		{
+			map->Remap(ids.x, ids.y);
+		}
+
 		isDone = true;
     }
 }
@@ -103,29 +108,61 @@ void Bomb::SetExplosionsPosition()
 	bool upExplosion = false;
 	bool downExplosion = false;
 
-	for(int i=1; i<=explosionRange; i++)
+	for (int i = 1; i <= explosionRange; i++)
 	{
-		if(map->GetMapChar(idX, idY) == '-')
+		if (map->GetMapChar(idX, idY) == '-')
 			explosions.push_back(new Explosion(posX, posY));
 
+		//Checa se a explosão deve ser criada na esquerda
 		if (map->GetMapChar(idX - i, idY) == '-' && !leftExplosion)
 			explosions.push_back(new Explosion(posX - i * tileSize, posY));
-		else if(map->GetMapChar(idX - i, idY) != '-')
+		else if (map->GetMapChar(idX - i, idY) == '+' && !leftExplosion) {
+			explosions.push_back(new Explosion(posX - i * tileSize, posY));
 			leftExplosion = true;
+			map->SetMapChar(idX - i, idY, '-');
+			idsExplosions.push_back(sf::Vector2i(idX - i, idY));
+		}
+		else if (map->GetMapChar(idX - i, idY) == '/' && !leftExplosion) {
+			leftExplosion = true;
+		}
 
-		if(map->GetMapChar(idX + i, idY) == '-' && !rightExplosion)
+		//Checa se a explosão deve ser criada na direita
+		if (map->GetMapChar(idX + i, idY) == '-' && !rightExplosion)
 			explosions.push_back(new Explosion(posX + i * tileSize, posY));
-		else if(map->GetMapChar(idX + i, idY) != '-')
+		else if (map->GetMapChar(idX + i, idY) == '+' && !rightExplosion) {
+			explosions.push_back(new Explosion(posX + i * tileSize, posY));
 			rightExplosion = true;
+			map->SetMapChar(idX + i, idY, '-');
+			idsExplosions.push_back(sf::Vector2i(idX + i, idY));
+		}
+		else if (map->GetMapChar(idX + i, idY) == '/' && !rightExplosion) {
+			rightExplosion = true;
+		}
 
-		if(map->GetMapChar(idX, idY + i) == '-' && !downExplosion)
+		//Checa se a explosão deve ser criada em cima
+		if (map->GetMapChar(idX, idY + i) == '-' && !downExplosion)
 			explosions.push_back(new Explosion(posX, posY + i * tileSize));
-		else if(map->GetMapChar(idX, idY + i) != '-')
+		else if (map->GetMapChar(idX, idY + i) == '+' && !downExplosion) {
+			explosions.push_back(new Explosion(posX, posY + i * tileSize));
 			downExplosion = true;
+			map->SetMapChar(idX, idY + i, '-');
+			idsExplosions.push_back(sf::Vector2i(idX, idY + i));
+		}
+		else if (map->GetMapChar(idX, idY + i) == '/' && !downExplosion) {
+			downExplosion = true;
+		}
 
-		if(map->GetMapChar(idX , idY - i) == '-' && !upExplosion)
+		//Checa se a explosão deve ser criada em baixo
+		if (map->GetMapChar(idX, idY - i) == '-' && !upExplosion)
 			explosions.push_back(new Explosion(posX, posY - i * tileSize));
-		else if(map->GetMapChar(idX, idY - i) != '-')
+		else if (map->GetMapChar(idX, idY - i) == '+' && !upExplosion) {
+			explosions.push_back(new Explosion(posX, posY - i * tileSize));
 			upExplosion = true;
+			map->SetMapChar(idX, idY - i, '-');
+			idsExplosions.push_back(sf::Vector2i(idX, idY - i));
+		}
+		else if (map->GetMapChar(idX, idY - i) == '/' && !upExplosion) {
+			upExplosion = true;
+		}
 	}
 }

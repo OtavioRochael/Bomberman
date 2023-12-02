@@ -24,6 +24,7 @@ private:
 	sf::Vector2f position;
 
 	std::vector<Explosion*> explosions;
+	std::vector<sf::Vector2i> idsExplosions;
 
 	Map* map;
 
