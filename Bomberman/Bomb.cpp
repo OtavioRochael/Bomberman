@@ -110,8 +110,9 @@ void Bomb::SetExplosionsPosition()
 
 	for (int i = 1; i <= explosionRange; i++)
 	{
-		if (map->GetMapChar(idX, idY) == '-')
+		if (map->GetMapChar(idX, idY) == '-') {
 			explosions.push_back(new Explosion(posX, posY));
+		}
 
 		//Checa se a explosão deve ser criada na esquerda
 		if (map->GetMapChar(idX - i, idY) == '-' && !leftExplosion)
