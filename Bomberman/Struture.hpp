@@ -17,6 +17,7 @@ public:
 	~Structure();
 
 	sf::Sprite GetSprite();
+	StrutureType GetType() { return type; }
 	void Render(sf::RenderWindow& window);
 private:
 	StrutureType type;

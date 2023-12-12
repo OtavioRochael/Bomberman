@@ -22,7 +22,7 @@ void Structure::Render(sf::RenderWindow& window)
 
 void Structure::InitSprite()
 {
-	int chance = (108237 % 100) + 1;
+	int chance = rand() % 100 + 1;
 	switch (type)
 	{
 	case Grass: 

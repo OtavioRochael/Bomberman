@@ -5,6 +5,7 @@
 #include "Bomb.hpp"
 
 enum class PlayerState { None, Up, Down, Left, Right, PlantingBomb, isDead };
+enum class SideCollision { None, Left, Right, Up, Down, LeftDown, LeftUp, RightDown, RightUp };
 
 class Player
 {
@@ -25,6 +26,7 @@ public:
 	void PlantBomb();
 	void PlantBombDelay(sf::Time deltaTime);
 	bool CanPlantBomb();
+	const bool IsColliding();
 	void SetColliding(bool isColliding);
 
 	void Reset();
@@ -39,6 +41,10 @@ private:
 	float maxBombDelay;
 	float scale;
 	bool isColliding{ false };
+	bool leftColliding{ false };
+	bool rightColliding{ false };
+	bool upColliding{ false };
+	bool downColliding{ false };
 	bool isDead{ false };
 	bool isPlantingBomb;
 
@@ -46,16 +52,22 @@ private:
 	Map* map;
 
 	sf::Sprite shape;
+	sf::RectangleShape boxCollider;
 	sf::Texture texture;
 	int size;
 
 	sf::Vector2u spawnPosition;
 	PlayerState currentState;
 	Animator *animator;
-	sf::FloatRect collisionBox;
 
 	void InitAnimations();
+	void InitVariables();
+	void InitShape();
+	void BombManager(sf::Time& deltaTime);
 	void UpdateAnimations();
+	void InitBoxCollider();
 	void CheckCollision(std::vector<Explosion*> explosions);
+	void CheckCollisionWithMap();
+	void CollisionDetected(SideCollision side);
 };
 
