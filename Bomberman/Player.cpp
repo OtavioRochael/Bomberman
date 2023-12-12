@@ -2,25 +2,20 @@
 
 Player::Player(Map* map): map(map)
 {
-	bombRange = 3;
-	maxBombs = 10;
-	maxBombDelay = 2.f;
-	bombDelay = maxBombDelay;
-	bombs = maxBombs;
-	isPlantingBomb = false;
-	size = 32;
-	shape.setPosition(48.f, 48.f);
-	speed = 70.f;
-	scale = 1.f;
-	shape.scale(scale, scale);
 
+	InitVariables();
 	InitAnimations();
-
-	shape.setOrigin(size / 2.f, size / 2.f);
+	InitShape();
+	InitBoxCollider();
 }
 
 Player::~Player()
 {
+	delete animator;
+	for (auto bomb : bombList)
+	{
+		delete bomb;
+	}
 }
 
 void Player::Update(sf::Time& deltaTime)
@@ -28,22 +23,8 @@ void Player::Update(sf::Time& deltaTime)
 	UpdateAnimations();
 	animator->Update(deltaTime);
 	PlantBombDelay(deltaTime);
-	
-    for (auto bomb : bombList)
-    {
-        // Atualiza o estado da bomba com base no tempo decorrido desde o último quadro
-        bomb->Update(deltaTime);
-
-		if(bomb->IsExploded())
-			CheckCollision(bomb->GetExplosions());
-
-		if (bomb->IsDone())
-		{
-			bombList.erase(std::remove(bombList.begin(), bombList.end(), bomb), bombList.end());
-			delete bomb;
-		}
-	}
-
+	CheckCollisionWithMap();
+	BombManager(deltaTime);
 }
 
 void Player::Render(sf::RenderWindow& window)
@@ -53,6 +34,7 @@ void Player::Render(sf::RenderWindow& window)
 		bomb->Render(window);
 	}
 
+	window.draw(boxCollider);
 	window.draw(shape);
 }
 
@@ -120,6 +102,11 @@ bool Player::CanPlantBomb()
 void Player::PlantBombDelay(sf::Time deltaTime)
 {
 	bombDelay += deltaTime.asSeconds();
+}
+
+const bool Player::IsColliding()
+{
+	return isColliding;
 }
 
 void Player::SetColliding(bool isColliding)
@@ -195,13 +182,124 @@ void Player::UpdateAnimations()
  */
 void Player::CheckCollision(std::vector<Explosion*> explosions)
 {
-	float offset = size / 2.75f;
-	collisionBox = sf::FloatRect(shape.getGlobalBounds().left + offset, shape.getGlobalBounds().top + offset, offset / 2.f, offset / 2.f);
-
 	for (auto& explosion : explosions)
 	{
-		if (collisionBox.intersects(explosion->GetGlobalBounds()) && currentState != PlayerState::isDead && explosion->GetCollidable()) {
+		if (boxCollider.getGlobalBounds().intersects(explosion->GetGlobalBounds()) && currentState != PlayerState::isDead && explosion->GetCollidable()) {
 			currentState = PlayerState::isDead;
+		}
+	}
+}
+
+void Player::CheckCollisionWithMap()
+{
+	boxCollider.setPosition(this->GetPosition().x - 16 * 0.65, this->GetPosition().y - 16 * 0.75);
+
+	int x = round(boxCollider.getPosition().x / size);
+	int y = round(boxCollider.getPosition().y / size);
+
+	SideCollision side;
+	
+	Structure* structureR = map->GetStructure(x + 1, y);
+	Structure* structureL = map->GetStructure(x - 1, y);
+	Structure* structureU = map->GetStructure(x, y - 1);
+	Structure* structureD = map->GetStructure(x, y + 1);
+	Structure* structureRU = map->GetStructure(x + 1, y - 1);
+	Structure* structureRD = map->GetStructure(x + 1, y + 1);
+	Structure* structureLU = map->GetStructure(x - 1, y - 1);
+	Structure* structureLD = map->GetStructure(x - 1, y + 1);
+
+	if (this->boxCollider.getGlobalBounds().intersects(structureR->GetSprite().getGlobalBounds()) && structureR->GetType() != StrutureType::Grass) {
+		CollisionDetected(SideCollision::Right);
+	}
+	else if (this->boxCollider.getGlobalBounds().intersects(structureL->GetSprite().getGlobalBounds()) && structureL->GetType() != StrutureType::Grass) {
+		CollisionDetected(SideCollision::Left);
+	}
+	else if (this->boxCollider.getGlobalBounds().intersects(structureD->GetSprite().getGlobalBounds()) && structureD->GetType() != StrutureType::Grass) {
+		CollisionDetected(SideCollision::Down);
+	}
+	else if (this->boxCollider.getGlobalBounds().intersects(structureU->GetSprite().getGlobalBounds()) && structureU->GetType() != StrutureType::Grass) {
+		CollisionDetected(SideCollision::Up);
+	}
+	else if (this->boxCollider.getGlobalBounds().intersects(structureLU->GetSprite().getGlobalBounds()) && structureLU->GetType() != StrutureType::Grass) {
+		CollisionDetected(SideCollision::LeftUp);
+	}
+	else if (this->boxCollider.getGlobalBounds().intersects(structureLD->GetSprite().getGlobalBounds()) && structureLD->GetType() != StrutureType::Grass) {
+		CollisionDetected(SideCollision::LeftDown);
+	}
+	else if (this->boxCollider.getGlobalBounds().intersects(structureRU->GetSprite().getGlobalBounds()) && structureRU->GetType() != StrutureType::Grass) {
+		CollisionDetected(SideCollision::RightUp);
+	}
+	else if (this->boxCollider.getGlobalBounds().intersects(structureRD->GetSprite().getGlobalBounds()) && structureRD->GetType() != StrutureType::Grass) {
+		CollisionDetected(SideCollision::RightDown);
+	}
+	else {
+		CollisionDetected(SideCollision::None);
+	}
+}
+
+void Player::CollisionDetected(SideCollision side)
+{
+	if (side == SideCollision::Up)
+		shape.setPosition(shape.getPosition().x, shape.getPosition().y + .45f);
+	if (side == SideCollision::Down)
+		shape.setPosition(shape.getPosition().x, shape.getPosition().y - .45f);
+	if(side == SideCollision::Left)
+		shape.setPosition(shape.getPosition().x + .45f, shape.getPosition().y);
+	if (side == SideCollision::Right)
+		shape.setPosition(shape.getPosition().x - .45f , shape.getPosition().y);
+	if(side == SideCollision::LeftUp)
+		shape.setPosition(shape.getPosition().x + .45f, shape.getPosition().y + .45f);
+	if(side == SideCollision::LeftDown)
+		shape.setPosition(shape.getPosition().x + .45f, shape.getPosition().y - .45f);
+	if(side == SideCollision::RightUp)
+		shape.setPosition(shape.getPosition().x - .45f, shape.getPosition().y + .45f);
+	if(side == SideCollision::RightDown)
+		shape.setPosition(shape.getPosition().x - .45f, shape.getPosition().y - .45f);
+}
+
+void Player::InitVariables()
+{
+	bombRange = 3;
+	maxBombs = 10;
+	maxBombDelay = 2.f;
+	bombDelay = maxBombDelay;
+	bombs = maxBombs;
+	isPlantingBomb = false;
+	size = 32;
+	speed = 70.f;
+	scale = 1.f;
+}
+
+void Player::InitBoxCollider()
+{
+	boxCollider = sf::RectangleShape();
+	boxCollider.setSize(sf::Vector2f(size * 0.65, size * 0.75));
+	boxCollider.setFillColor(sf::Color::Transparent);
+	boxCollider.setOutlineThickness(2.f);
+	boxCollider.setOutlineColor(sf::Color::Red);
+}
+
+void Player::InitShape()
+{
+	shape.setPosition(48.f, 48.f);
+	shape.scale(scale, scale);
+	shape.setOrigin(size / 2.f, size / 2.f);
+}
+
+void Player::BombManager(sf::Time& deltaTime)
+{
+	for (auto bomb : bombList)
+	{
+		// Atualiza o estado da bomba com base no tempo decorrido desde o último quadro
+		bomb->Update(deltaTime);
+
+		if (bomb->IsExploded())
+			CheckCollision(bomb->GetExplosions());
+
+		if (bomb->IsDone())
+		{
+			bombList.erase(std::remove(bombList.begin(), bombList.end(), bomb), bombList.end());
+			delete bomb;
 		}
 	}
 }
