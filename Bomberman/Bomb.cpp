@@ -72,9 +72,19 @@ void Bomb::Render(sf::RenderWindow& window)
 	}
 }
 
+void Bomb::SetIsPassable(bool isPassable)
+{
+	this->isPassable = isPassable;
+}
+
 std::vector<Explosion*>& Bomb::GetExplosions()
 {
 	return explosions;
+}
+
+sf::FloatRect Bomb::GetGlobalBounds()
+{
+	return sprite.getGlobalBounds();
 }
 
 void Bomb::InitAnimations()

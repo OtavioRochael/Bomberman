@@ -1,6 +1,6 @@
 #include "Player.hpp"
 
-Player::Player(Map* map): map(map)
+Player::Player(Map* map) : map(map)
 {
 
 	InitVariables();
@@ -23,13 +23,14 @@ void Player::Update(sf::Time& deltaTime)
 	UpdateAnimations();
 	animator->Update(deltaTime);
 	PlantBombDelay(deltaTime);
+	CheckCollisionWithBomb(this->bombList);
 	CheckCollisionWithMap();
 	BombManager(deltaTime);
 }
 
 void Player::Render(sf::RenderWindow& window)
 {
-	for(auto bomb : bombList)
+	for (auto bomb : bombList)
 	{
 		bomb->Render(window);
 	}
@@ -74,7 +75,7 @@ PlayerState Player::GetPlayerState()
 	return this->currentState;
 }
 
-void Player::Move(const float x,const float y, sf::Time& deltaTime)
+void Player::Move(const float x, const float y, sf::Time& deltaTime)
 {
 	if (!isColliding) {
 		shape.move(x * speed * deltaTime.asSeconds(), y * speed * deltaTime.asSeconds());
@@ -168,7 +169,7 @@ void Player::UpdateAnimations()
 		break;
 	}
 
-	if(animation != animator->GetCurrentAnimationName())
+	if (animation != animator->GetCurrentAnimationName())
 		animator->SwitchAnimation(animation);
 }
 
@@ -198,7 +199,7 @@ void Player::CheckCollisionWithMap()
 	int y = round(boxCollider.getPosition().y / size);
 
 	SideCollision side;
-	
+
 	Structure* structureR = map->GetStructure(x + 1, y);
 	Structure* structureL = map->GetStructure(x - 1, y);
 	Structure* structureU = map->GetStructure(x, y - 1);
@@ -240,21 +241,21 @@ void Player::CheckCollisionWithMap()
 void Player::CollisionDetected(SideCollision side)
 {
 	if (side == SideCollision::Up)
-		shape.setPosition(shape.getPosition().x, shape.getPosition().y + .45f);
+		shape.setPosition(shape.getPosition().x, shape.getPosition().y + collisionOffset);
 	if (side == SideCollision::Down)
-		shape.setPosition(shape.getPosition().x, shape.getPosition().y - .45f);
-	if(side == SideCollision::Left)
-		shape.setPosition(shape.getPosition().x + .45f, shape.getPosition().y);
+		shape.setPosition(shape.getPosition().x, shape.getPosition().y - collisionOffset);
+	if (side == SideCollision::Left)
+		shape.setPosition(shape.getPosition().x + collisionOffset, shape.getPosition().y);
 	if (side == SideCollision::Right)
-		shape.setPosition(shape.getPosition().x - .45f , shape.getPosition().y);
-	if(side == SideCollision::LeftUp)
-		shape.setPosition(shape.getPosition().x + .45f, shape.getPosition().y + .45f);
-	if(side == SideCollision::LeftDown)
-		shape.setPosition(shape.getPosition().x + .45f, shape.getPosition().y - .45f);
-	if(side == SideCollision::RightUp)
-		shape.setPosition(shape.getPosition().x - .45f, shape.getPosition().y + .45f);
-	if(side == SideCollision::RightDown)
-		shape.setPosition(shape.getPosition().x - .45f, shape.getPosition().y - .45f);
+		shape.setPosition(shape.getPosition().x - collisionOffset, shape.getPosition().y);
+	if (side == SideCollision::LeftUp)
+		shape.setPosition(shape.getPosition().x + collisionOffset, shape.getPosition().y + collisionOffset);
+	if (side == SideCollision::LeftDown)
+		shape.setPosition(shape.getPosition().x + collisionOffset, shape.getPosition().y - collisionOffset);
+	if (side == SideCollision::RightUp)
+		shape.setPosition(shape.getPosition().x - collisionOffset, shape.getPosition().y + collisionOffset);
+	if (side == SideCollision::RightDown)
+		shape.setPosition(shape.getPosition().x - collisionOffset, shape.getPosition().y - collisionOffset);
 }
 
 void Player::InitVariables()
@@ -284,6 +285,43 @@ void Player::InitShape()
 	shape.setPosition(48.f, 48.f);
 	shape.scale(scale, scale);
 	shape.setOrigin(size / 2.f, size / 2.f);
+}
+
+void Player::CheckCollisionWithBomb(std::vector<Bomb*> bombs)
+{
+	for (auto bomb : bombs)
+	{
+		if (bomb != NULL) {
+			if (bomb->IsPassable() && boxCollider.getGlobalBounds().intersects(bomb->GetGlobalBounds()))
+			{
+				this->boxCollider.setOutlineColor(sf::Color::Green);
+			}
+			else {
+				bomb->SetIsPassable(false);
+				this->boxCollider.setOutlineColor(sf::Color::Red);
+			}
+			
+			if (!bomb->IsPassable()) {
+				if (boxCollider.getGlobalBounds().intersects(bomb->GetGlobalBounds())) {
+					sf::Vector2f dir = bomb->GetPosition() - boxCollider.getPosition();
+					if (std::abs(dir.x) > std::abs(dir.y)) {
+						if (dir.x > 0) {
+							this->CollisionDetected(SideCollision::Right);
+						}
+						else {
+							this->CollisionDetected(SideCollision::Left);
+						}
+					}
+					else {
+						if (dir.y > 0)
+							this->CollisionDetected(SideCollision::Down);
+						else
+							this->CollisionDetected(SideCollision::Up);
+					}
+				}
+			}
+		}
+	}
 }
 
 void Player::BombManager(sf::Time& deltaTime)

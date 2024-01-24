@@ -40,6 +40,7 @@ private:
 	float bombDelay;
 	float maxBombDelay;
 	float scale;
+	float collisionOffset{ 0.45f };
 	bool isColliding{ false };
 	bool leftColliding{ false };
 	bool rightColliding{ false };
@@ -67,6 +68,7 @@ private:
 	void UpdateAnimations();
 	void InitBoxCollider();
 	void CheckCollision(std::vector<Explosion*> explosions);
+	void CheckCollisionWithBomb(std::vector<Bomb*> bombs);
 	void CheckCollisionWithMap();
 	void CollisionDetected(SideCollision side);
 };

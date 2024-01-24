@@ -14,10 +14,15 @@ public:
 
 	void Update(sf::Time& deltaTime);
 	void Render(sf::RenderWindow& window);
+	void SetIsPassable(bool isPassable);
 
 	bool IsDone() { return isDone; }
+	bool IsPassable() { return isPassable; }
 
 	std::vector<Explosion*>& GetExplosions();
+
+	sf::FloatRect GetGlobalBounds();
+	sf::Vector2f GetPosition() { return position; }
 private:
 	sf::Sprite sprite;
 	sf::Texture texture;
@@ -31,6 +36,7 @@ private:
 	float timer;
 	int explosionRange;
 
+	bool isPassable{ true };
 	bool explode{ false };
 	bool animPlayed{false };
 	bool isDone{ false };
