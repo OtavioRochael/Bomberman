@@ -10,6 +10,7 @@ public:
 	void Render(sf::RenderWindow& window);
 	void Remap(int idX, int idY);
 	void SetMapChar(int posX, int posY, char c);
+	void ResetMap();
 	Structure* GetStructure(int idX, int idY) { return map[idX][idY]; }
 	char GetMapChar(int posX, int posY);
 private:
