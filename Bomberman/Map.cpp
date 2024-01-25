@@ -36,18 +36,8 @@ void Map::SetMapChar(int posX, int posY, char c)
 	mapChar[posX][posY] = c;
 }
 
-char Map::GetMapChar(int posX, int posY)
+void Map::ResetMap()
 {
-	if(posX < 0 || posY < 0 || posX >= mapSizeX/2.f|| posY >= mapSizeY/2.f)
-		return ' ';
-	return mapChar[posX][posY];
-}
-
-void Map::InitMap()
-{
-	mapSizeX = windowSize.x / tileSize;
-	mapSizeY = windowSize.y / tileSize;
-
 	mapChar = {
 		{ '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'},
 		{ '*', '-', '-', '+', '+', '+', '/', '+', '+', '+', '+', '*'},
@@ -62,6 +52,21 @@ void Map::InitMap()
 		{ '*', '+', '+', '+', '/', '+', '+', '+', '/', '-', '-', '*'},
 		{ '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'}
 	};
+}
+
+char Map::GetMapChar(int posX, int posY)
+{
+	if(posX < 0 || posY < 0 || posX >= mapSizeX/2.f|| posY >= mapSizeY/2.f)
+		return ' ';
+	return mapChar[posX][posY];
+}
+
+void Map::InitMap()
+{
+	mapSizeX = windowSize.x / tileSize;
+	mapSizeY = windowSize.y / tileSize;
+
+	ResetMap();
 
 	for (int i = 0; i < mapSizeX; i++) {
 		map.push_back(std::vector<Structure*>());

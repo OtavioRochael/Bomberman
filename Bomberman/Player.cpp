@@ -341,4 +341,3 @@ void Player::BombManager(sf::Time& deltaTime)
 		}
 	}
 }
-
