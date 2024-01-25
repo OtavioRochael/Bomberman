@@ -29,6 +29,7 @@ private:
 	sf::Time elapsedTime;
 	sf::Time deltaTime;
 
-	Player player;
+	Player player1;
+	Player player2;
 };
 
