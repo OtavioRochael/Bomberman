@@ -70,7 +70,7 @@ private:
 	void UpdateAnimations();
 	void InitBoxCollider();
 	void CheckCollision(std::vector<Explosion*> explosions);
-	void CheckCollisionWithBomb(std::vector<Bomb*> bombs);
+	void CheckCollisionWithBomb(std::vector<Bomb*>& bombs);
 	void CheckCollisionWithMap();
 	void CollisionDetected(SideCollision side);
 };

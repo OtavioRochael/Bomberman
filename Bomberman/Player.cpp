@@ -77,7 +77,8 @@ PlayerState Player::GetPlayerState()
 
 void Player::Move(const float x, const float y, sf::Time& deltaTime)
 {
-	shape.move(x * speed * deltaTime.asSeconds(), y * speed * deltaTime.asSeconds());
+	if(!isColliding)
+		shape.move(x * speed * deltaTime.asSeconds(), y * speed * deltaTime.asSeconds());
 }
 
 void Player::PlantBomb()
@@ -207,30 +208,39 @@ void Player::CheckCollisionWithMap()
 	
 	if (structureR->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureR->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::Right);
+		isColliding = true;
 	}
 	else if (structureL->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureL->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::Left);
+		isColliding = true;
 	}
 	else if (structureD->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureD->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::Down);
+		isColliding = true;
 	}
 	else if (structureU->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureU->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::Up);
+		isColliding = true;
 	}
 	else if (structureLU->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureLU->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::LeftUp);
+		isColliding = true;
 	}
 	else if (structureLD->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureLD->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::LeftDown);
+		isColliding = true;
 	}
 	else if (structureRU->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureRU->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::RightUp);
+		isColliding = true;
 	}
 	else if (structureRD->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureRD->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::RightDown);
+		isColliding = true;
 	}
 	else {
 		CollisionDetected(SideCollision::None);
+		isColliding = false;
 	}
 }
 
@@ -285,7 +295,7 @@ void Player::InitShape()
 	shape.setOrigin(size / 2.f, size / 2.f);
 }
 
-void Player::CheckCollisionWithBomb(std::vector<Bomb*> bombs)
+void Player::CheckCollisionWithBomb(std::vector<Bomb*>& bombs)
 {
 	for (auto bomb : bombs)
 	{
@@ -305,17 +315,27 @@ void Player::CheckCollisionWithBomb(std::vector<Bomb*> bombs)
 					if (std::abs(dir.x) > std::abs(dir.y)) {
 						if (dir.x > 0) {
 							this->CollisionDetected(SideCollision::Right);
+							isColliding = true;
 						}
 						else {
 							this->CollisionDetected(SideCollision::Left);
+							isColliding = true;
 						}
 					}
 					else {
-						if (dir.y > 0)
+						if (dir.y > 0) {
 							this->CollisionDetected(SideCollision::Down);
-						else
+							isColliding = true;
+						}
+
+						else {
 							this->CollisionDetected(SideCollision::Up);
+							isColliding = true;
+						}
 					}
+				}
+				else {
+					isColliding = false;
 				}
 			}
 		}
