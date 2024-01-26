@@ -61,6 +61,8 @@ private:
 	PlayerState currentState;
 	Animator *animator;
 
+	sf::Time accumulatedTime = { sf::Time::Zero };
+
 	void InitAnimations();
 	void InitVariables();
 	void InitShape();

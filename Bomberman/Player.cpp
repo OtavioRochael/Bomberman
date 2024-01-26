@@ -22,9 +22,9 @@ void Player::Update(sf::Time& deltaTime)
 {
 	UpdateAnimations();
 	animator->Update(deltaTime);
-	PlantBombDelay(deltaTime);
-	CheckCollisionWithBomb(this->bombList);
 	CheckCollisionWithMap();
+	CheckCollisionWithBomb(this->bombList);
+	PlantBombDelay(deltaTime);
 	BombManager(deltaTime);
 }
 
@@ -77,9 +77,7 @@ PlayerState Player::GetPlayerState()
 
 void Player::Move(const float x, const float y, sf::Time& deltaTime)
 {
-	if (!isColliding) {
-		shape.move(x * speed * deltaTime.asSeconds(), y * speed * deltaTime.asSeconds());
-	}
+	shape.move(x * speed * deltaTime.asSeconds(), y * speed * deltaTime.asSeconds());
 }
 
 void Player::PlantBomb()
@@ -198,8 +196,6 @@ void Player::CheckCollisionWithMap()
 	int x = round(boxCollider.getPosition().x / size);
 	int y = round(boxCollider.getPosition().y / size);
 
-	SideCollision side;
-
 	Structure* structureR = map->GetStructure(x + 1, y);
 	Structure* structureL = map->GetStructure(x - 1, y);
 	Structure* structureU = map->GetStructure(x, y - 1);
@@ -208,29 +204,29 @@ void Player::CheckCollisionWithMap()
 	Structure* structureRD = map->GetStructure(x + 1, y + 1);
 	Structure* structureLU = map->GetStructure(x - 1, y - 1);
 	Structure* structureLD = map->GetStructure(x - 1, y + 1);
-
-	if (this->boxCollider.getGlobalBounds().intersects(structureR->GetSprite().getGlobalBounds()) && structureR->GetType() != StrutureType::Grass) {
+	
+	if (structureR->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureR->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::Right);
 	}
-	else if (this->boxCollider.getGlobalBounds().intersects(structureL->GetSprite().getGlobalBounds()) && structureL->GetType() != StrutureType::Grass) {
+	else if (structureL->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureL->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::Left);
 	}
-	else if (this->boxCollider.getGlobalBounds().intersects(structureD->GetSprite().getGlobalBounds()) && structureD->GetType() != StrutureType::Grass) {
+	else if (structureD->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureD->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::Down);
 	}
-	else if (this->boxCollider.getGlobalBounds().intersects(structureU->GetSprite().getGlobalBounds()) && structureU->GetType() != StrutureType::Grass) {
+	else if (structureU->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureU->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::Up);
 	}
-	else if (this->boxCollider.getGlobalBounds().intersects(structureLU->GetSprite().getGlobalBounds()) && structureLU->GetType() != StrutureType::Grass) {
+	else if (structureLU->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureLU->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::LeftUp);
 	}
-	else if (this->boxCollider.getGlobalBounds().intersects(structureLD->GetSprite().getGlobalBounds()) && structureLD->GetType() != StrutureType::Grass) {
+	else if (structureLD->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureLD->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::LeftDown);
 	}
-	else if (this->boxCollider.getGlobalBounds().intersects(structureRU->GetSprite().getGlobalBounds()) && structureRU->GetType() != StrutureType::Grass) {
+	else if (structureRU->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureRU->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::RightUp);
 	}
-	else if (this->boxCollider.getGlobalBounds().intersects(structureRD->GetSprite().getGlobalBounds()) && structureRD->GetType() != StrutureType::Grass) {
+	else if (structureRD->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureRD->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::RightDown);
 	}
 	else {
@@ -276,6 +272,8 @@ void Player::InitBoxCollider()
 	boxCollider = sf::RectangleShape();
 	boxCollider.setSize(sf::Vector2f(size * 0.65, size * 0.75));
 	boxCollider.setFillColor(sf::Color::Transparent);
+
+	// Debug
 	boxCollider.setOutlineThickness(2.f);
 	boxCollider.setOutlineColor(sf::Color::Red);
 }
