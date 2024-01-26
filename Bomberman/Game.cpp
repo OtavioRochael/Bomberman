@@ -66,6 +66,7 @@ void Game::HandleInput()
 void Game::Update()
 {
 	window.Update();
+
 	player1.Update(elapsedTime);
 	player2.Update(elapsedTime);
 }
