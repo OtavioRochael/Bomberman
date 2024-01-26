@@ -4,6 +4,7 @@
 Game::Game() : window("Bomberman", sf::Vector2u(768, 768)), player1(map), player2(map), map(new Map(sf::Vector2i(768, 768), 32))
 {
 	elapsedTime = clock.restart();
+	window.GetRenderWindow()->setFramerateLimit(60);
 }
 
 Game::~Game()

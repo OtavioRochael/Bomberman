@@ -315,27 +315,24 @@ void Player::CheckCollisionWithBomb(std::vector<Bomb*>& bombs)
 					if (std::abs(dir.x) > std::abs(dir.y)) {
 						if (dir.x > 0) {
 							this->CollisionDetected(SideCollision::Right);
-							isColliding = true;
 						}
 						else {
 							this->CollisionDetected(SideCollision::Left);
-							isColliding = true;
 						}
+						isColliding= true;
 					}
 					else {
 						if (dir.y > 0) {
 							this->CollisionDetected(SideCollision::Down);
-							isColliding = true;
 						}
 
 						else {
 							this->CollisionDetected(SideCollision::Up);
-							isColliding = true;
 						}
+						isColliding = true;
 					}
 				}
 				else {
-					isColliding = false;
 				}
 			}
 		}
@@ -346,16 +343,18 @@ void Player::BombManager(sf::Time& deltaTime)
 {
 	for (auto bomb : bombList)
 	{
-		// Atualiza o estado da bomba com base no tempo decorrido desde o último quadro
-		bomb->Update(deltaTime);
+		if (bomb != NULL) {
+			// Atualiza o estado da bomba com base no tempo decorrido desde o último quadro
+			bomb->Update(deltaTime);
 
-		if (bomb->IsExploded())
-			CheckCollision(bomb->GetExplosions());
+			if (bomb->IsExploded())
+				CheckCollision(bomb->GetExplosions());
 
-		if (bomb->IsDone())
-		{
-			bombList.erase(std::remove(bombList.begin(), bombList.end(), bomb), bombList.end());
-			delete bomb;
+			if (bomb->IsDone())
+			{
+				bombList.erase(std::remove(bombList.begin(), bombList.end(), bomb), bombList.end());
+				delete bomb;
+			}
 		}
 	}
 }
