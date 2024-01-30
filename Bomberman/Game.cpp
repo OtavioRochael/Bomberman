@@ -1,10 +1,9 @@
 #include "Game.hpp"
 #include <iostream>
 
-Game::Game() : window("Bomberman", sf::Vector2u(768, 768)), player1(map), player2(map), map(new Map(sf::Vector2i(768, 768), 32))
+Game::Game() : window("Bomberman", sf::Vector2u(768, 768)), player1(map, player2.GetBombList(), PLAYER_ID::PLAYER1), player2(map, player1.GetBombList(), PLAYER_ID::PLAYER2), map(new Map(sf::Vector2i(768, 768), 32))
 {
 	elapsedTime = clock.restart();
-	window.GetRenderWindow()->setFramerateLimit(60);
 }
 
 Game::~Game()

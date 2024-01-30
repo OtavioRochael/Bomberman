@@ -10,15 +10,17 @@ enum class SideCollision { None, Left, Right, Up, Down, LeftDown, LeftUp, RightD
 class Player
 {
 public:
-	Player(Map* map);
+	Player(Map* map, std::vector<Bomb*>& enemyBombList, PLAYER_ID playerId);
 	~Player();
 
 	void Update(sf::Time& deltaTime);
 	void Render(sf::RenderWindow& window);
 
 	void SetPlayerState(PlayerState dir);
+	void SetPlayerId(PLAYER_ID player_id);
 	PlayerState GetDirection();
 	PlayerState GetPlayerState();
+	std::vector<Bomb*>& GetBombList();
 	sf::Vector2f GetPosition();
 	float GetSpeed();
 
@@ -48,14 +50,18 @@ private:
 	bool downColliding{ false };
 	bool isDead{ false };
 	bool isPlantingBomb;
+	bool isPlayerCrossingBomb{ false };
 
 	std::vector<Bomb*> bombList;
+	std::vector<Bomb*>& enemyBombList;
 	Map* map;
 
 	sf::Sprite shape;
 	sf::RectangleShape boxCollider;
 	sf::Texture texture;
 	int size;
+
+	PLAYER_ID player_id;
 
 	sf::Vector2u spawnPosition;
 	PlayerState currentState;
