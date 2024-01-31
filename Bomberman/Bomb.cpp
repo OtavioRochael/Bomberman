@@ -72,9 +72,20 @@ void Bomb::Render(sf::RenderWindow& window)
 	}
 }
 
-void Bomb::SetIsPassable(bool isPassable)
+void Bomb::SetIsPassable(PLAYER_ID player_id, bool isPassable)
 {
-	this->isPassable = isPassable;
+	if(player_id == PLAYER_ID::PLAYER1)
+		this->isPassableP1 = isPassable;
+	else
+		this->isPassableP2 = isPassable;
+}
+
+bool Bomb::IsPassable(PLAYER_ID player_id)
+{
+	if(player_id == PLAYER_ID::PLAYER1)
+		return isPassableP1;
+	else
+		return isPassableP2;
 }
 
 std::vector<Explosion*>& Bomb::GetExplosions()

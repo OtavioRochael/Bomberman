@@ -1,8 +1,8 @@
 #include "Player.hpp"
 
-Player::Player(Map* map) : map(map)
+Player::Player(Map* map, std::vector<Bomb*>& enemyBombList, PLAYER_ID playerId) : map(map), enemyBombList(enemyBombList)
 {
-
+	this->SetPlayerId(playerId);
 	InitVariables();
 	InitAnimations();
 	InitShape();
@@ -24,6 +24,7 @@ void Player::Update(sf::Time& deltaTime)
 	animator->Update(deltaTime);
 	CheckCollisionWithMap();
 	CheckCollisionWithBomb(this->bombList);
+	CheckCollisionWithBomb(this->enemyBombList);
 	PlantBombDelay(deltaTime);
 	BombManager(deltaTime);
 }
@@ -42,6 +43,11 @@ void Player::Render(sf::RenderWindow& window)
 void Player::SetPlayerState(PlayerState dir)
 {
 	currentState = dir;
+}
+
+void Player::SetPlayerId(PLAYER_ID player_id)
+{
+	this->player_id = player_id;
 }
 
 PlayerState Player::GetDirection()
@@ -68,6 +74,11 @@ void Player::Reset()
 {
 	SetPlayerState(PlayerState::None);
 	shape.setPosition(sf::Vector2f(spawnPosition.x * size, spawnPosition.y * size));
+}
+
+std::vector<Bomb*>& Player::GetBombList()
+{
+	return bombList;
 }
 
 PlayerState Player::GetPlayerState()
@@ -300,44 +311,44 @@ void Player::CheckCollisionWithBomb(std::vector<Bomb*>& bombs)
 	for (auto bomb : bombs)
 	{
 		if (bomb != NULL) {
-			if (bomb->IsPassable() && boxCollider.getGlobalBounds().intersects(bomb->GetGlobalBounds()))
+			if (bomb->IsPassable(this->player_id) && boxCollider.getGlobalBounds().intersects(bomb->GetGlobalBounds()))
 			{
 				this->boxCollider.setOutlineColor(sf::Color::Green);
 			}
 			else {
-				bomb->SetIsPassable(false);
+				bomb->SetIsPassable(this->player_id, false);
 				this->boxCollider.setOutlineColor(sf::Color::Red);
 			}
 			
-			if (!bomb->IsPassable()) {
+			if (!bomb->IsPassable(this->player_id) ) {
 				if (boxCollider.getGlobalBounds().intersects(bomb->GetGlobalBounds())) {
 					sf::Vector2f dir = bomb->GetPosition() - boxCollider.getPosition();
 					if (std::abs(dir.x) > std::abs(dir.y)) {
 						if (dir.x > 0) {
 							this->CollisionDetected(SideCollision::Right);
-							isColliding = true;
 						}
 						else {
 							this->CollisionDetected(SideCollision::Left);
-							isColliding = true;
 						}
+						isColliding= true;
 					}
 					else {
 						if (dir.y > 0) {
 							this->CollisionDetected(SideCollision::Down);
-							isColliding = true;
 						}
 
 						else {
 							this->CollisionDetected(SideCollision::Up);
-							isColliding = true;
 						}
+						isColliding = true;
 					}
 				}
 				else {
-					isColliding = false;
 				}
 			}
+
+			if (bomb->IsExploded())
+				CheckCollision(bomb->GetExplosions());
 		}
 	}
 }
@@ -346,16 +357,15 @@ void Player::BombManager(sf::Time& deltaTime)
 {
 	for (auto bomb : bombList)
 	{
-		// Atualiza o estado da bomba com base no tempo decorrido desde o último quadro
-		bomb->Update(deltaTime);
+		if (bomb != NULL) {
+			// Atualiza o estado da bomba com base no tempo decorrido desde o último quadro
+			bomb->Update(deltaTime);
 
-		if (bomb->IsExploded())
-			CheckCollision(bomb->GetExplosions());
-
-		if (bomb->IsDone())
-		{
-			bombList.erase(std::remove(bombList.begin(), bombList.end(), bomb), bombList.end());
-			delete bomb;
+			if (bomb->IsDone())
+			{
+				bombList.erase(std::remove(bombList.begin(), bombList.end(), bomb), bombList.end());
+				delete bomb;
+			}
 		}
 	}
 }

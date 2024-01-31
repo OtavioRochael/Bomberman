@@ -4,6 +4,8 @@
 #include "Explosion.hpp"
 #include "Map.hpp"
 
+enum class PLAYER_ID { PLAYER1, PLAYER2 };
+
 class Bomb
 {
 public:
@@ -14,10 +16,10 @@ public:
 
 	void Update(sf::Time& deltaTime);
 	void Render(sf::RenderWindow& window);
-	void SetIsPassable(bool isPassable);
+	void SetIsPassable(PLAYER_ID player_id,bool isPassable);
 
 	bool IsDone() { return isDone; }
-	bool IsPassable() { return isPassable; }
+	bool IsPassable(PLAYER_ID player_id);
 
 	std::vector<Explosion*>& GetExplosions();
 
@@ -36,7 +38,8 @@ private:
 	float timer;
 	int explosionRange;
 
-	bool isPassable{ true };
+	bool isPassableP1{ true };
+	bool isPassableP2{ true };
 	bool explode{ false };
 	bool animPlayed{false };
 	bool isDone{ false };
@@ -49,4 +52,3 @@ private:
 	void SetRoundPositionToSpawn();
 	void SetExplosionsPosition();
 };
-
