@@ -346,6 +346,9 @@ void Player::CheckCollisionWithBomb(std::vector<Bomb*>& bombs)
 				else {
 				}
 			}
+
+			if (bomb->IsExploded())
+				CheckCollision(bomb->GetExplosions());
 		}
 	}
 }
@@ -357,9 +360,6 @@ void Player::BombManager(sf::Time& deltaTime)
 		if (bomb != NULL) {
 			// Atualiza o estado da bomba com base no tempo decorrido desde o último quadro
 			bomb->Update(deltaTime);
-
-			if (bomb->IsExploded())
-				CheckCollision(bomb->GetExplosions());
 
 			if (bomb->IsDone())
 			{
