@@ -196,7 +196,7 @@ void Player::CheckCollision(std::vector<Explosion*> explosions)
 	for (auto& explosion : explosions)
 	{
 		if (boxCollider.getGlobalBounds().intersects(explosion->GetGlobalBounds()) && currentState != PlayerState::isDead && explosion->GetCollidable()) {
-			currentState = PlayerState::isDead;
+			this->Die();
 		}
 	}
 }
@@ -275,6 +275,12 @@ void Player::CollisionDetected(SideCollision side)
 		shape.setPosition(shape.getPosition().x - collisionOffset, shape.getPosition().y - collisionOffset);
 }
 
+void Player::Die()
+{
+	shape.setColor(sf::Color::Red);
+	currentState = PlayerState::isDead;
+}
+
 void Player::InitVariables()
 {
 	bombRange = 3;
@@ -301,6 +307,7 @@ void Player::InitBoxCollider()
 
 void Player::InitShape()
 {
+	originalColor = shape.getColor();
 	shape.setPosition(48.f, 48.f);
 	shape.scale(scale, scale);
 	shape.setOrigin(size / 2.f, size / 2.f);

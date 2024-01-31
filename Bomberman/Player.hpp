@@ -52,6 +52,8 @@ private:
 	bool isPlantingBomb;
 	bool isPlayerCrossingBomb{ false };
 
+	sf::Color originalColor;
+
 	std::vector<Bomb*> bombList;
 	std::vector<Bomb*>& enemyBombList;
 	Map* map;
@@ -79,5 +81,6 @@ private:
 	void CheckCollisionWithBomb(std::vector<Bomb*>& bombs);
 	void CheckCollisionWithMap();
 	void CollisionDetected(SideCollision side);
+	void Die();
 };
 
