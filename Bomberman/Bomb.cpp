@@ -98,6 +98,11 @@ sf::FloatRect Bomb::GetGlobalBounds()
 	return sprite.getGlobalBounds();
 }
 
+sf::Vector2f Bomb::GetShapePosition()
+{
+	return sf::Vector2f(sprite.getPosition().x - tileSize, sprite.getPosition().y - tileSize);
+}
+
 void Bomb::InitAnimations()
 {
 	animator = new Animator(sprite);

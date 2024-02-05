@@ -42,7 +42,7 @@ private:
 	float bombDelay;
 	float maxBombDelay;
 	float scale;
-	float collisionOffset{ 0.45f };
+	float collisionOffset{ 0.60f };
 	bool isColliding{ false };
 	bool leftColliding{ false };
 	bool rightColliding{ false };
