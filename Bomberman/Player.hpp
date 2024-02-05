@@ -42,7 +42,7 @@ private:
 	float bombDelay;
 	float maxBombDelay;
 	float scale;
-	float collisionOffset{ 0.45f };
+	float collisionOffset{ 0.60f };
 	bool isColliding{ false };
 	bool leftColliding{ false };
 	bool rightColliding{ false };
@@ -51,6 +51,8 @@ private:
 	bool isDead{ false };
 	bool isPlantingBomb;
 	bool isPlayerCrossingBomb{ false };
+
+	sf::Color originalColor;
 
 	std::vector<Bomb*> bombList;
 	std::vector<Bomb*>& enemyBombList;
@@ -79,5 +81,6 @@ private:
 	void CheckCollisionWithBomb(std::vector<Bomb*>& bombs);
 	void CheckCollisionWithMap();
 	void CollisionDetected(SideCollision side);
+	void Die();
 };
 

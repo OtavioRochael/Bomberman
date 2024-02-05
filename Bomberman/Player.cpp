@@ -196,7 +196,7 @@ void Player::CheckCollision(std::vector<Explosion*> explosions)
 	for (auto& explosion : explosions)
 	{
 		if (boxCollider.getGlobalBounds().intersects(explosion->GetGlobalBounds()) && currentState != PlayerState::isDead && explosion->GetCollidable()) {
-			currentState = PlayerState::isDead;
+			this->Die();
 		}
 	}
 }
@@ -217,35 +217,35 @@ void Player::CheckCollisionWithMap()
 	Structure* structureLU = map->GetStructure(x - 1, y - 1);
 	Structure* structureLD = map->GetStructure(x - 1, y + 1);
 	
-	if (structureR->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureR->GetSprite().getGlobalBounds())) {
-		CollisionDetected(SideCollision::Right);
-		isColliding = true;
-	}
-	if (structureL->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureL->GetSprite().getGlobalBounds())) {
-		CollisionDetected(SideCollision::Left);
-		isColliding = true;
-	}
-	if (structureD->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureD->GetSprite().getGlobalBounds())) {
-		CollisionDetected(SideCollision::Down);
-		isColliding = true;
-	}
 	if (structureU->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureU->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::Up);
 		isColliding = true;
 	}
-	if (structureLU->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureLU->GetSprite().getGlobalBounds())) {
+	else if (structureR->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureR->GetSprite().getGlobalBounds())) {
+		CollisionDetected(SideCollision::Right);
+		isColliding = true;
+	}
+	else if (structureL->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureL->GetSprite().getGlobalBounds())) {
+		CollisionDetected(SideCollision::Left);
+		isColliding = true;
+	}
+	else if (structureD->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureD->GetSprite().getGlobalBounds())) {
+		CollisionDetected(SideCollision::Down);
+		isColliding = true;
+	}
+	else if (structureLU->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureLU->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::LeftUp);
 		isColliding = true;
 	}
-	if (structureLD->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureLD->GetSprite().getGlobalBounds())) {
+	else if (structureLD->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureLD->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::LeftDown);
 		isColliding = true;
 	}
-	if (structureRU->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureRU->GetSprite().getGlobalBounds())) {
+	else if (structureRU->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureRU->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::RightUp);
 		isColliding = true;
 	}
-	if (structureRD->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureRD->GetSprite().getGlobalBounds())) {
+	else if (structureRD->GetType() != StrutureType::Grass && this->boxCollider.getGlobalBounds().intersects(structureRD->GetSprite().getGlobalBounds())) {
 		CollisionDetected(SideCollision::RightDown);
 		isColliding = true;
 	}
@@ -259,20 +259,26 @@ void Player::CollisionDetected(SideCollision side)
 {
 	if (side == SideCollision::Up)
 		shape.setPosition(shape.getPosition().x, shape.getPosition().y + collisionOffset);
-	if (side == SideCollision::Down)
+	else if (side == SideCollision::Down)
 		shape.setPosition(shape.getPosition().x, shape.getPosition().y - collisionOffset);
-	if (side == SideCollision::Left) 
+	else if (side == SideCollision::Left)
 		shape.setPosition(shape.getPosition().x + collisionOffset, shape.getPosition().y);
-	if (side == SideCollision::Right)
+	else if (side == SideCollision::Right)
 		shape.setPosition(shape.getPosition().x - collisionOffset, shape.getPosition().y);
-	if (side == SideCollision::LeftUp)
+	else if (side == SideCollision::LeftUp)
 		shape.setPosition(shape.getPosition().x + collisionOffset, shape.getPosition().y + collisionOffset);
-	if (side == SideCollision::LeftDown)
+	else if (side == SideCollision::LeftDown)
 		shape.setPosition(shape.getPosition().x + collisionOffset, shape.getPosition().y - collisionOffset);
-	if (side == SideCollision::RightUp)
+	else if (side == SideCollision::RightUp)
 		shape.setPosition(shape.getPosition().x - collisionOffset, shape.getPosition().y + collisionOffset);
-	if (side == SideCollision::RightDown)
+	else if (side == SideCollision::RightDown)
 		shape.setPosition(shape.getPosition().x - collisionOffset, shape.getPosition().y - collisionOffset);
+}
+
+void Player::Die()
+{
+	shape.setColor(sf::Color::Red);
+	currentState = PlayerState::isDead;
 }
 
 void Player::InitVariables()
@@ -301,6 +307,7 @@ void Player::InitBoxCollider()
 
 void Player::InitShape()
 {
+	originalColor = shape.getColor();
 	shape.setPosition(48.f, 48.f);
 	shape.scale(scale, scale);
 	shape.setOrigin(size / 2.f, size / 2.f);
@@ -319,9 +326,10 @@ void Player::CheckCollisionWithBomb(std::vector<Bomb*>& bombs)
 				bomb->SetIsPassable(this->player_id, false);
 			}
 			
-			if (!bomb->IsPassable(this->player_id) ) {
+			if (!bomb->IsPassable(this->player_id)) {
 				if (boxCollider.getGlobalBounds().intersects(bomb->GetGlobalBounds())) {
-					sf::Vector2f dir = bomb->GetPosition() - boxCollider.getPosition();
+					sf::Vector2f dir = bomb->GetShapePosition() - (boxCollider.getPosition());
+
 					if (std::abs(dir.x) > std::abs(dir.y)) {
 						if (dir.x > 0) {
 							this->CollisionDetected(SideCollision::Right);
@@ -329,20 +337,17 @@ void Player::CheckCollisionWithBomb(std::vector<Bomb*>& bombs)
 						else {
 							this->CollisionDetected(SideCollision::Left);
 						}
-						isColliding= true;
+						isColliding = true;
 					}
 					else {
-						if (dir.y > 0) {
+						if (dir.y > 0.f) {
 							this->CollisionDetected(SideCollision::Down);
 						}
-
 						else {
 							this->CollisionDetected(SideCollision::Up);
 						}
 						isColliding = true;
 					}
-				}
-				else {
 				}
 			}
 

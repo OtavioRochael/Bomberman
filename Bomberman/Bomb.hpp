@@ -25,6 +25,7 @@ public:
 
 	sf::FloatRect GetGlobalBounds();
 	sf::Vector2f GetPosition() { return position; }
+	sf::Vector2f GetShapePosition();
 private:
 	sf::Sprite sprite;
 	sf::Texture texture;
