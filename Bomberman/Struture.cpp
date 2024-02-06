@@ -32,7 +32,7 @@ void Structure::InitSprite()
 			texture = AssetManager::GetTexture("Texture/grass1.png");
 		break;
 	case DirtWall:
-		texture = AssetManager::GetTexture("Texture/Brick.png");
+		texture = AssetManager::GetTexture("Texture/brick.png");
 		break;
 	case Stone:
 		if (chance < 33)
