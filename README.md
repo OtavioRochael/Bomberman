@@ -1,2 +1,1 @@
-Construindo um bomberman em C++ afim de treinar minhas habilidades! Esse projeto é feito utilizando a biblioteca SFML, não foi utilizada nenhuma engine. 
-Em breve disponibilizarei um executavel, no momento é necessário compilar o projeto.
+Building a Bomberman game in C++ to practice my skills! This project uses the SFML library and doesn't rely on any game engine. I'll soon provide an executable; for now, you'll need to compile the project yourself.
